@@ -147,7 +147,7 @@ After editing `plugin.json`, reload the extension at `chrome://extensions`.
 
 ## Storage
 
-Recipes are stored locally in Chrome's built-in storage (`chrome.storage.local`). The cap is **5 MB**, which is enough for roughly 50–100 recipes depending on length. The extension logs a console warning when storage exceeds 85% capacity.
+Recipes are stored locally in Chrome's built-in storage (`chrome.storage.local`). The soft cap is **50 MB**, which is enough for several hundred recipes. The extension logs a console warning when storage exceeds 85% of that limit.
 
 Nothing is sent to any server. No analytics, no telemetry, no accounts.
 

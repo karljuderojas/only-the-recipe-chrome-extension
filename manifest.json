@@ -5,6 +5,7 @@
   "description": "Strips SEO noise from recipe pages so you see only the recipe — and saves them to a personal local library.",
   "permissions": [
     "storage",
+    "unlimitedStorage",
     "activeTab"
   ],
   "action": {

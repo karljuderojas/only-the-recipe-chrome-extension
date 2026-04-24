@@ -26,10 +26,11 @@ async function saveRecipe(recipe) {
   warnIfNearQuota();
 }
 
+const STORAGE_CAP_BYTES = 50 * 1024 * 1024; // 50 MB soft cap
+
 async function warnIfNearQuota() {
   const bytes = await chrome.storage.local.getBytesInUse('recipes');
-  const quota = chrome.storage.local.QUOTA_BYTES;
-  if (bytes / quota > 0.85) {
-    console.warn(`Only The Recipe: storage at ${Math.round(bytes / quota * 100)}% capacity`);
+  if (bytes / STORAGE_CAP_BYTES > 0.85) {
+    console.warn(`Only The Recipe: storage at ${Math.round(bytes / STORAGE_CAP_BYTES * 100)}% of 50 MB cap`);
   }
 }
