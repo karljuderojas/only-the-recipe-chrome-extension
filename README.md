@@ -14,7 +14,6 @@ A Chrome extension that strips SEO noise from recipe pages — no ads, no life s
 - [Features](#features)
 - [Storage](#storage)
 - [File Structure](#file-structure)
-- [Publishing to Chrome Web Store](#publishing-to-chrome-web-store)
 - [License](#license)
 
 ---
@@ -183,21 +182,6 @@ only-the-recipe/
     ├── icon48.png
     └── icon128.png
 ```
-
----
-
-## Publishing to Chrome Web Store
-
-To make the extension installable with one click for anyone:
-
-1. Go to the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole)
-2. Pay the one-time **$5 developer registration fee**
-3. Click **New Item** and upload `only-the-recipe.zip`
-4. Fill in the store listing — name, description, screenshots (min. 1280×800)
-5. Submit for review — approval typically takes 1–3 business days
-6. After approval, share the store link and anyone can install with one click
-
-A pre-packaged `only-the-recipe.zip` is included in the Documents folder for upload.
 
 ---
 
