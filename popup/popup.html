@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Only The Recipe</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+  <header>
+    <h1>Only The Recipe</h1>
+    <span id="header-back" style="display:none">
+      <button id="back-btn">← Back</button>
+    </span>
+  </header>
+
+  <!-- List view -->
+  <div id="list-view">
+    <div id="empty-state">
+      <p>No saved recipes yet.</p>
+      <p style="margin-top:8px;font-size:12px">Visit any recipe page and click<br><strong>🍽 Only The Recipe</strong> to save it.</p>
+    </div>
+    <div id="recipe-list"></div>
+  </div>
+
+  <!-- Detail view -->
+  <div id="detail-view">
+    <div id="detail-hero"></div>
+    <div id="detail-title"></div>
+    <div id="detail-meta"></div>
+    <div class="section-head">Ingredients</div>
+    <ul id="detail-ingredients"></ul>
+    <div class="section-head" id="detail-equipment-head">Equipment</div>
+    <ul id="detail-equipment"></ul>
+    <div class="section-head">Instructions</div>
+    <ol id="detail-instructions"></ol>
+    <div class="section-head" id="detail-author-notes-head">Author Notes</div>
+    <div id="detail-author-notes"></div>
+    <div class="section-head">My Notes</div>
+    <textarea id="detail-notes" placeholder="Add personal notes…"></textarea>
+    <button id="open-cached">Open cached view</button>
+  </div>
+
+  <script src="../storage/storage.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

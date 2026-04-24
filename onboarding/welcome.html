@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to Only The Recipe</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f8f9fb;
+      color: #111;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 80px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      max-width: 640px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .hero {
+      background: #2563eb;
+      color: #fff;
+      padding: 48px 40px 36px;
+      text-align: center;
+    }
+
+    .hero-icon {
+      width: 72px;
+      height: 72px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 36px;
+    }
+
+    .hero h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      font-size: 16px;
+      opacity: 0.85;
+      line-height: 1.6;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .steps {
+      padding: 40px;
+    }
+
+    .steps h2 {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 24px;
+    }
+
+    .step {
+      display: flex;
+      gap: 18px;
+      margin-bottom: 28px;
+      align-items: flex-start;
+    }
+
+    .step:last-child { margin-bottom: 0; }
+
+    .step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #eff6ff;
+      color: #2563eb;
+      font-weight: 700;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .step-body h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .step-body p {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    .step-body code {
+      background: #f1f5f9;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #2563eb;
+    }
+
+    .divider {
+      height: 1px;
+      background: #f0f0f0;
+      margin: 0 40px;
+    }
+
+    .features {
+      padding: 32px 40px 40px;
+    }
+
+    .features h2 {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #888;
+      margin-bottom: 20px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .feature {
+      background: #f8f9fb;
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+
+    .feature-label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .feature-desc {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .footer {
+      margin-top: 32px;
+      font-size: 12px;
+      color: #aaa;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+
+    <div class="hero">
+      <div class="hero-icon">🍽</div>
+      <h1>Welcome to Only The Recipe</h1>
+      <p>No ads, no life stories. Just the recipe — saved locally, available any time.</p>
+    </div>
+
+    <div class="steps">
+      <h2>How to use it</h2>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Visit any recipe page</h3>
+          <p>Only The Recipe automatically detects recipe content using structured data and page signals. No setup needed.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Click the button</h3>
+          <p>A <code>🍽 Only The Recipe</code> button appears in the bottom-right corner of the page. Click it to collapse everything except the recipe.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Save it to your library</h3>
+          <p>Click <code>Save recipe</code> inside the clean view. The recipe is stored locally — no account required.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>Browse your library anytime</h3>
+          <p>Click the Only The Recipe icon in the Chrome toolbar to see all saved recipes, add notes, or open a cached read-only view.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h3>Restore the page when you're done</h3>
+          <p>Click <code>✕ Show full page</code> to instantly restore the original layout. No reload, no lost scroll position.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="features">
+      <h2>What's included</h2>
+      <div class="feature-grid">
+        <div class="feature">
+          <div class="feature-label">Zero accounts</div>
+          <div class="feature-desc">Everything lives in Chrome's local storage. Nothing is sent anywhere.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-label">Live view</div>
+          <div class="feature-desc">Inherits the site's fonts and colors so the recipe feels at home.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-label">Personal notes</div>
+          <div class="feature-desc">Add freeform notes to any saved recipe from the popup.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-label">Cached view</div>
+          <div class="feature-desc">Open a clean standalone copy of any saved recipe, even offline.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-label">Reversible</div>
+          <div class="feature-desc">The clean view is non-destructive. Restore the page in one click.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-label">Extensible</div>
+          <div class="feature-desc">Add new sites with a one-line entry in <code>plugin.json</code>.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">Only The Recipe &nbsp;·&nbsp; Stored locally &nbsp;·&nbsp; No tracking</div>
+
+</body>
+</html>

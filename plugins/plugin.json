@@ -1,0 +1,14 @@
+{
+  "plugins": [
+    { "site": "allrecipes.com",       "container": ".recipe-content" },
+    { "site": "seriouseats.com",      "container": ".recipe-card" },
+    { "site": "tasty.co",             "container": ".recipe" },
+    { "site": "foodnetwork.com",      "container": ".o-RecipeInfo" },
+    { "site": "bonappetit.com",       "container": ".recipe__body" },
+    { "site": "epicurious.com",       "container": ".recipe-content" },
+    { "site": "thekitchn.com",        "container": ".Recipe" },
+    { "site": "smittenkitchen.com",   "container": ".recipe-content" },
+    { "site": "budgetbytes.com",      "container": ".wprm-recipe-container" },
+    { "site": "pinchofyum.com",       "container": ".wprm-recipe-container" }
+  ]
+}

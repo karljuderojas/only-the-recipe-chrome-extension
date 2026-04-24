@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Export Icons</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 32px; background: #f5f5f5; }
+    h1 { margin-bottom: 24px; font-size: 20px; }
+    .grid { display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-end; }
+    .icon-block { text-align: center; }
+    canvas { display: block; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); margin-bottom: 8px; }
+    a.dl {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 6px 14px;
+      background: #2563eb;
+      color: #fff;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 13px;
+    }
+    p { color: #666; font-size: 13px; margin-top: 24px; }
+  </style>
+</head>
+<body>
+  <h1>Only The Recipe — Icon Export</h1>
+  <div class="grid" id="grid"></div>
+  <p>Click each download button, then rename the files to <code>icon16.png</code>, <code>icon48.png</code>, <code>icon128.png</code> and move them into the <code>icons/</code> folder.</p>
+
+  <script>
+    const SIZES = [16, 48, 128];
+    const SVG_SRC = 'icon.svg';
+
+    const img = new Image();
+    img.src = SVG_SRC;
+    img.onload = () => {
+      const grid = document.getElementById('grid');
+      for (const size of SIZES) {
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, size, size);
+
+        const label = document.createElement('div');
+        label.textContent = `${size}×${size}`;
+
+        const link = document.createElement('a');
+        link.className = 'dl';
+        link.download = `icon${size}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.textContent = `Download icon${size}.png`;
+
+        const block = document.createElement('div');
+        block.className = 'icon-block';
+        block.append(canvas, label, link);
+        grid.appendChild(block);
+      }
+    };
+  </script>
+</body>
+</html>
