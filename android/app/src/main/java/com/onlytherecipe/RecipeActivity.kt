@@ -79,6 +79,7 @@ class RecipeActivity : AppCompatActivity() {
         // Mode A: view a saved recipe by its savedAt timestamp
         val savedAt = intent.getLongExtra("saved_at", -1L)
         if (savedAt > 0) {
+            extractionDone = true  // prevent extractor firing on the rendered HTML
             val recipe = RecipeStorage.getById(this, savedAt)
             if (recipe != null) {
                 displayRecipe(recipe, isSaved = true)
