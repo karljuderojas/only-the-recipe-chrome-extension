@@ -1,12 +1,14 @@
 package com.onlytherecipe
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -87,6 +89,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         handleShareIntent(intent)
+
+        UpdateChecker.check(this) { latestTag, apkUrl ->
+            AlertDialog.Builder(this)
+                .setTitle("Update available")
+                .setMessage("Version $latestTag is ready to install.")
+                .setPositiveButton("Download") { _, _ ->
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl)))
+                }
+                .setNegativeButton("Later", null)
+                .show()
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
