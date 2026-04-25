@@ -30,6 +30,15 @@
             android:layout_weight="1"/>
 
         <Button
+            android:id="@+id/groceryBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+ List"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="#16a34a"
+            android:visibility="gone"/>
+
+        <Button
             android:id="@+id/shareBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

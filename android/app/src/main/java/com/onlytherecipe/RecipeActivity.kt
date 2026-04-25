@@ -20,9 +20,9 @@ class RecipeActivity : AppCompatActivity() {
     private lateinit var webView: WebView
     private lateinit var progressBar: ProgressBar
     private lateinit var saveBtn: Button
-    private lateinit var notesInput: EditText
-
     private lateinit var shareBtn: Button
+    private lateinit var groceryBtn: Button
+    private lateinit var notesInput: EditText
 
     private var currentRecipe: Recipe? = null
     private var extractionDone = false
@@ -36,17 +36,38 @@ class RecipeActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         saveBtn     = findViewById(R.id.saveBtn)
         shareBtn    = findViewById(R.id.shareBtn)
+        groceryBtn  = findViewById(R.id.groceryBtn)
         notesInput  = findViewById(R.id.notesInput)
 
         findViewById<Button>(R.id.backBtn).setOnClickListener { finish() }
 
-        shareBtn.setOnClickListener { currentRecipe?.let { shareRecipe(it) } }
+        shareBtn.setOnClickListener {
+            currentRecipe?.let { recipe ->
+                val intent = Intent(Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(Intent.EXTRA_SUBJECT, recipe.title)
+                    putExtra(Intent.EXTRA_TEXT, recipe.toShareText())
+                }
+                startActivity(Intent.createChooser(intent, "Share recipe via…"))
+            }
+        }
+
+        groceryBtn.setOnClickListener {
+            currentRecipe?.let { recipe ->
+                if (recipe.ingredients.isEmpty()) {
+                    Toast.makeText(this, "No ingredients found.", Toast.LENGTH_SHORT).show()
+                } else {
+                    GroceryStorage.addItems(this, recipe.ingredients)
+                    Toast.makeText(this, "${recipe.ingredients.size} item(s) added to grocery list.",
+                        Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
         webView.settings.loadWithOverviewMode = true
         webView.settings.useWideViewPort = true
-        // Prevent the WebView from reading local files or content:// URIs
         webView.settings.allowFileAccess = false
         webView.settings.allowContentAccess = false
 
@@ -128,20 +149,15 @@ class RecipeActivity : AppCompatActivity() {
     }
 
     private fun displayRecipe(recipe: Recipe, isSaved: Boolean) {
+        currentRecipe = recipe
         progressBar.visibility = View.GONE
         saveBtn.visibility     = if (isSaved) View.GONE else View.VISIBLE
         shareBtn.visibility    = View.VISIBLE
+        groceryBtn.visibility  = if (recipe.ingredients.isEmpty()) View.GONE else View.VISIBLE
 
-        if (isSaved && recipe.notes.isNotEmpty()) {
+        if (isSaved) {
             notesInput.visibility = View.VISIBLE
             notesInput.setText(recipe.notes)
-            notesInput.setOnFocusChangeListener { _, hasFocus ->
-                if (!hasFocus) {
-                    RecipeStorage.updateNotes(this, recipe.savedAt, notesInput.text.toString())
-                }
-            }
-        } else if (isSaved) {
-            notesInput.visibility = View.VISIBLE
             notesInput.setOnFocusChangeListener { _, hasFocus ->
                 if (!hasFocus) {
                     RecipeStorage.updateNotes(this, recipe.savedAt, notesInput.text.toString())
@@ -158,15 +174,14 @@ class RecipeActivity : AppCompatActivity() {
 
     private fun buildHtml(recipe: Recipe): String {
         val timing = buildList {
-            if (recipe.timingPrep.isNotEmpty())  add("Prep: ${formatDuration(recipe.timingPrep)}")
-            if (recipe.timingCook.isNotEmpty())  add("Cook: ${formatDuration(recipe.timingCook)}")
-            if (recipe.timingTotal.isNotEmpty()) add("Total: ${formatDuration(recipe.timingTotal)}")
+            if (recipe.timingPrep.isNotEmpty())  add("Prep: ${recipe.timingPrep.fmt()}")
+            if (recipe.timingCook.isNotEmpty())  add("Cook: ${recipe.timingCook.fmt()}")
+            if (recipe.timingTotal.isNotEmpty()) add("Total: ${recipe.timingTotal.fmt()}")
         }.joinToString(" &nbsp;·&nbsp; ")
 
-        val ingredients   = recipe.ingredients.joinToString("") { "<li>${it.esc()}</li>" }
-        val equipment     = recipe.equipment.joinToString("") { "<li>${it.esc()}</li>" }
-        val instructions  = buildInstructionsHtml(recipe.instructions)
-        // Only allow http/https in the source link — reject javascript:, data:, etc.
+        val ingredients  = recipe.ingredients.joinToString("") { "<li>${it.esc()}</li>" }
+        val equipment    = recipe.equipment.joinToString("") { "<li>${it.esc()}</li>" }
+        val instructions = buildInstructionsHtml(recipe.instructions)
         val safeSourceUrl = recipe.sourceUrl.takeIf {
             it.startsWith("https://") || it.startsWith("http://")
         } ?: ""
@@ -201,7 +216,7 @@ class RecipeActivity : AppCompatActivity() {
 <body>
   ${if (recipe.imageUrl.isNotEmpty()) """<img class="hero" src="${recipe.imageUrl.esc()}" alt="${recipe.title.esc()}">""" else ""}
   <h1>${recipe.title.esc()}</h1>
-  ${if (timing.isNotEmpty())          """<p class="timing">$timing</p>""" else ""}
+  ${if (timing.isNotEmpty())             """<p class="timing">$timing</p>""" else ""}
   ${if (recipe.recipeYield.isNotEmpty()) """<p class="yield"><strong>Yield:</strong> ${recipe.recipeYield.esc()}</p>""" else ""}
   ${if (recipe.description.isNotEmpty()) """<p>${recipe.description.esc()}</p>""" else ""}
   ${if (recipe.ingredients.isNotEmpty()) """<h2>Ingredients</h2><ul>$ingredients</ul>""" else ""}
@@ -224,92 +239,6 @@ class RecipeActivity : AppCompatActivity() {
         }
         sb.append("</ol>")
         return sb.toString()
-    }
-
-    private fun formatDuration(iso: String): String {
-        if (!iso.startsWith("PT")) return iso
-        val hours   = Regex("(\\d+)H").find(iso)?.groupValues?.get(1)
-        val minutes = Regex("(\\d+)M").find(iso)?.groupValues?.get(1)
-        val parts   = mutableListOf<String>()
-        if (hours   != null) parts.add("$hours hr")
-        if (minutes != null) parts.add("$minutes min")
-        return parts.joinToString(" ").ifEmpty { iso }
-    }
-
-    private fun shareRecipe(recipe: Recipe) {
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_SUBJECT, recipe.title)
-            putExtra(Intent.EXTRA_TEXT, buildShareText(recipe))
-        }
-        startActivity(Intent.createChooser(intent, "Share recipe via…"))
-    }
-
-    private fun buildShareText(recipe: Recipe): String {
-        val sb = StringBuilder()
-
-        sb.appendLine(recipe.title)
-        sb.appendLine()
-
-        val timing = buildList {
-            if (recipe.timingPrep.isNotEmpty())  add("Prep: ${formatDuration(recipe.timingPrep)}")
-            if (recipe.timingCook.isNotEmpty())  add("Cook: ${formatDuration(recipe.timingCook)}")
-            if (recipe.timingTotal.isNotEmpty()) add("Total: ${formatDuration(recipe.timingTotal)}")
-        }
-        if (timing.isNotEmpty())           sb.appendLine(timing.joinToString(" · "))
-        if (recipe.recipeYield.isNotEmpty()) sb.appendLine("Yield: ${recipe.recipeYield}")
-        if (timing.isNotEmpty() || recipe.recipeYield.isNotEmpty()) sb.appendLine()
-
-        if (recipe.description.isNotEmpty()) {
-            sb.appendLine(recipe.description)
-            sb.appendLine()
-        }
-
-        if (recipe.ingredients.isNotEmpty()) {
-            sb.appendLine("INGREDIENTS")
-            recipe.ingredients.forEach { sb.appendLine("• $it") }
-            sb.appendLine()
-        }
-
-        if (recipe.equipment.isNotEmpty()) {
-            sb.appendLine("EQUIPMENT")
-            recipe.equipment.forEach { sb.appendLine("• $it") }
-            sb.appendLine()
-        }
-
-        if (recipe.instructions.isNotEmpty()) {
-            sb.appendLine("INSTRUCTIONS")
-            var stepNum = 1
-            recipe.instructions.forEach { step ->
-                if (step.startsWith("§:")) {
-                    sb.appendLine()
-                    sb.appendLine(step.substring(2).uppercase())
-                } else {
-                    sb.appendLine("$stepNum. $step")
-                    stepNum++
-                }
-            }
-            sb.appendLine()
-        }
-
-        if (recipe.authorNotes.isNotEmpty()) {
-            sb.appendLine("NOTES")
-            sb.appendLine(recipe.authorNotes)
-            sb.appendLine()
-        }
-
-        if (recipe.notes.isNotEmpty()) {
-            sb.appendLine("MY NOTES")
-            sb.appendLine(recipe.notes)
-            sb.appendLine()
-        }
-
-        val safeUrl = recipe.sourceUrl.takeIf {
-            it.startsWith("https://") || it.startsWith("http://")
-        }
-        if (safeUrl != null) sb.append("Source: $safeUrl")
-
-        return sb.toString().trimEnd()
     }
 
     private fun String.esc(): String = this

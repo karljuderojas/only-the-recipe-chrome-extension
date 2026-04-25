@@ -5,52 +5,90 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var urlInput: EditText
     private lateinit var recipeList: RecyclerView
     private lateinit var emptyView: TextView
-    private lateinit var adapter: RecipeAdapter
+    private lateinit var recipeAdapter: RecipeAdapter
+
+    private lateinit var libraryContainer: LinearLayout
+    private lateinit var groceryContainer: LinearLayout
+    private lateinit var groceryList: RecyclerView
+    private lateinit var groceryEmptyView: TextView
+    private lateinit var groceryAdapter: GroceryAdapter
+    private lateinit var bottomNav: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        urlInput   = findViewById(R.id.urlInput)
-        recipeList = findViewById(R.id.recipeList)
-        emptyView  = findViewById(R.id.emptyView)
+        urlInput          = findViewById(R.id.urlInput)
+        recipeList        = findViewById(R.id.recipeList)
+        emptyView         = findViewById(R.id.emptyView)
+        libraryContainer  = findViewById(R.id.libraryContainer)
+        groceryContainer  = findViewById(R.id.groceryContainer)
+        groceryList       = findViewById(R.id.groceryList)
+        groceryEmptyView  = findViewById(R.id.groceryEmptyView)
+        bottomNav         = findViewById(R.id.bottomNav)
 
-        adapter = RecipeAdapter(
+        recipeAdapter = RecipeAdapter(
             onClick  = { recipe -> openRecipe(savedAt = recipe.savedAt) },
+            onShare  = { recipe -> shareRecipe(recipe) },
             onDelete = { recipe ->
                 RecipeStorage.delete(this, recipe.savedAt)
-                refreshList()
+                refreshLibrary()
             }
         )
         recipeList.layoutManager = LinearLayoutManager(this)
-        recipeList.adapter = adapter
+        recipeList.adapter = recipeAdapter
+
+        groceryAdapter = GroceryAdapter(
+            onToggle = { item ->
+                GroceryStorage.toggleChecked(this, item.id)
+                refreshGrocery()
+            },
+            onDelete = { item ->
+                GroceryStorage.deleteItem(this, item.id)
+                refreshGrocery()
+            }
+        )
+        groceryList.layoutManager = LinearLayoutManager(this)
+        groceryList.adapter = groceryAdapter
 
         findViewById<Button>(R.id.goBtn).setOnClickListener {
             val url = urlInput.text.toString().trim()
             if (url.isNotEmpty()) openRecipe(url = url)
         }
-
         urlInput.setOnEditorActionListener { _, _, _ ->
             val url = urlInput.text.toString().trim()
             if (url.isNotEmpty()) openRecipe(url = url)
             true
         }
 
-        // Share intent received while app was not running
+        findViewById<Button>(R.id.clearDoneBtn).setOnClickListener {
+            GroceryStorage.clearChecked(this)
+            refreshGrocery()
+        }
+
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_library -> { showLibrary(); true }
+                R.id.nav_grocery -> { showGrocery(); true }
+                else -> false
+            }
+        }
+
         handleShareIntent(intent)
     }
 
-    // Called when app is already running (singleTop) and user shares again
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleShareIntent(intent)
@@ -58,22 +96,50 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        refreshList()
+        refreshLibrary()
+        if (groceryContainer.visibility == View.VISIBLE) refreshGrocery()
+    }
+
+    private fun showLibrary() {
+        libraryContainer.visibility = View.VISIBLE
+        groceryContainer.visibility = View.GONE
+        refreshLibrary()
+    }
+
+    private fun showGrocery() {
+        libraryContainer.visibility = View.GONE
+        groceryContainer.visibility = View.VISIBLE
+        refreshGrocery()
+    }
+
+    private fun refreshLibrary() {
+        val recipes = RecipeStorage.loadAll(this)
+        recipeAdapter.submitList(recipes)
+        emptyView.visibility  = if (recipes.isEmpty()) View.VISIBLE else View.GONE
+        recipeList.visibility = if (recipes.isEmpty()) View.GONE    else View.VISIBLE
+    }
+
+    private fun refreshGrocery() {
+        val items = GroceryStorage.loadAll(this)
+        groceryAdapter.submitList(items)
+        groceryEmptyView.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
+        groceryList.visibility      = if (items.isEmpty()) View.GONE    else View.VISIBLE
     }
 
     private fun handleShareIntent(intent: Intent) {
         if (intent.action != Intent.ACTION_SEND || intent.type != "text/plain") return
         val text = intent.getStringExtra(Intent.EXTRA_TEXT) ?: return
         val url  = extractUrl(text) ?: return
-        // Launch RecipeActivity and finish this one so Back returns to the browser, not the library
         openRecipe(url = url, fromShare = true)
     }
 
-    private fun refreshList() {
-        val recipes = RecipeStorage.loadAll(this)
-        adapter.submitList(recipes)
-        emptyView.visibility  = if (recipes.isEmpty()) View.VISIBLE else View.GONE
-        recipeList.visibility = if (recipes.isEmpty()) View.GONE    else View.VISIBLE
+    private fun shareRecipe(recipe: Recipe) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, recipe.title)
+            putExtra(Intent.EXTRA_TEXT, recipe.toShareText())
+        }
+        startActivity(Intent.createChooser(intent, "Share recipe via…"))
     }
 
     private fun openRecipe(url: String? = null, savedAt: Long? = null, fromShare: Boolean = false) {
@@ -81,13 +147,10 @@ class MainActivity : AppCompatActivity() {
         if (url     != null) intent.putExtra("url",      url)
         if (savedAt != null) intent.putExtra("saved_at", savedAt)
         startActivity(intent)
-        // When triggered by share, remove MainActivity from the back stack so
-        // pressing Back in RecipeActivity returns to the browser, not the library.
         if (fromShare) finish()
     }
 
     private fun extractUrl(text: String): String? {
-        // Chrome shares as "Page Title\nhttps://..." or just the URL
         val match = Regex("https?://[^\\s\"<>]+").find(text) ?: return null
         return match.value.trimEnd('.', ',', ')', ']', ';')
     }

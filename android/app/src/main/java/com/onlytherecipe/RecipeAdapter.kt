@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -14,13 +15,14 @@ import java.util.Locale
 
 class RecipeAdapter(
     private val onClick: (Recipe) -> Unit,
+    private val onShare: (Recipe) -> Unit,
     private val onDelete: (Recipe) -> Unit
 ) : ListAdapter<Recipe, RecipeAdapter.ViewHolder>(DIFF) {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val title: TextView = view.findViewById(R.id.recipeTitle)
-        private val date: TextView  = view.findViewById(R.id.recipeDate)
-        private val deleteBtn: Button = view.findViewById(R.id.deleteBtn)
+        private val title: TextView    = view.findViewById(R.id.recipeTitle)
+        private val date: TextView     = view.findViewById(R.id.recipeDate)
+        private val shareBtn: Button   = view.findViewById(R.id.recipeShareBtn)
 
         fun bind(recipe: Recipe) {
             title.text = recipe.title.ifEmpty { recipe.sourceUrl }
@@ -28,7 +30,15 @@ class RecipeAdapter(
                 SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(Date(recipe.savedAt))
             } else ""
             itemView.setOnClickListener { onClick(recipe) }
-            deleteBtn.setOnClickListener { onDelete(recipe) }
+            itemView.setOnLongClickListener {
+                AlertDialog.Builder(itemView.context)
+                    .setMessage("Delete \"${recipe.title.ifEmpty { "this recipe" }}\"?")
+                    .setPositiveButton("Delete") { _, _ -> onDelete(recipe) }
+                    .setNegativeButton("Cancel", null)
+                    .show()
+                true
+            }
+            shareBtn.setOnClickListener { onShare(recipe) }
         }
     }
 
