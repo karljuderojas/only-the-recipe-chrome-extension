@@ -6,6 +6,25 @@ const RECIPE_RE = /recipe|wprm|tasty|mv-recipe/i;
 const NOTE_RE = /^(notes?|tips?|cook'?s?\s+notes?|chef'?s?\s+notes?|hints?|variations?)$/i;
 const HEADING_RE = /^H[1-4]$/;
 
+// Strip HTML markup from fields that some sites (e.g. Serious Eats) embed in JSON-LD text values.
+// Removes images and captions before extracting text so photo credits don't bleed into steps.
+function cleanText(str) {
+  if (!str || typeof str !== 'string') return '';
+  if (!str.includes('<')) return str.trim();
+  const div = document.createElement('div');
+  div.innerHTML = str;
+  div.querySelectorAll('img, figure, figcaption, [class*="caption"], [class*="credit"]').forEach(el => el.remove());
+  return div.textContent.replace(/\s+/g, ' ').trim();
+}
+
+// Reject steps that look like category labels or related-recipe titles rather than instructions.
+// Real steps are long, or contain punctuation/digits; junk steps are short noun phrases.
+function isRealStep(text) {
+  if (!text) return false;
+  if (text.length > 80) return true;
+  return /[.,;:!?]|\d/.test(text);
+}
+
 // --- Signal 1: JSON-LD ---
 
 function extractFromJsonLd() {
@@ -24,9 +43,9 @@ function extractFromJsonLd() {
 
 function normalizeJsonLd(data) {
   return {
-    title:       data.name || '',
-    description: data.description || '',
-    ingredients: data.recipeIngredient || [],
+    title:       cleanText(data.name || ''),
+    description: cleanText(data.description || ''),
+    ingredients: (data.recipeIngredient || []).map(cleanText).filter(Boolean),
     instructions: flattenInstructions(data.recipeInstructions || []),
     equipment:   extractEquipment(data),
     authorNotes: extractAuthorNotes(null),
@@ -44,13 +63,21 @@ function normalizeJsonLd(data) {
 
 function flattenInstructions(raw) {
   if (!raw.length) return [];
-  if (typeof raw[0] === 'string') return raw;
+  if (typeof raw[0] === 'string') return raw.map(cleanText).filter(isRealStep);
   const steps = [];
   for (const item of raw) {
-    if (item['@type'] === 'HowToStep') steps.push(item.text || '');
+    if (item['@type'] === 'HowToStep') {
+      const text = cleanText(item.text || '');
+      if (isRealStep(text)) steps.push(text);
+    }
     if (item['@type'] === 'HowToSection') {
-      steps.push({ section: item.name || '' });
-      for (const s of item.itemListElement || []) steps.push(s.text || '');
+      const sectionSteps = (item.itemListElement || [])
+        .map(s => cleanText(s.text || ''))
+        .filter(isRealStep);
+      if (sectionSteps.length) {
+        steps.push({ section: item.name || '' });
+        steps.push(...sectionSteps);
+      }
     }
   }
   return steps;
@@ -59,7 +86,9 @@ function flattenInstructions(raw) {
 function extractEquipment(data) {
   const raw = data.tool || data.recipeEquipment || [];
   const items = Array.isArray(raw) ? raw : [raw];
-  return items.map(item => (typeof item === 'string' ? item : item.name || '')).filter(Boolean);
+  return items
+    .map(item => (typeof item === 'string' ? item : item.name || '').trim())
+    .filter(s => s.length > 2);
 }
 
 function extractImage(img) {
@@ -70,8 +99,6 @@ function extractImage(img) {
 }
 
 // --- Hero image ---
-// og:image is always the canonical recipe photo on food blogs.
-// Falls back to the largest visible img in the container.
 
 function findHeroImage(containerEl) {
   const og =
@@ -93,7 +120,6 @@ function findHeroImage(containerEl) {
 }
 
 // --- Author notes ---
-// Checks known plugin selectors, then falls back to heading-based detection.
 
 function extractAuthorNotes(container) {
   const root = container || document;
@@ -179,20 +205,22 @@ function extractFromContainer(container, source) {
   const equipmentItems = [];
 
   container.querySelectorAll('li').forEach(li => {
+    const text = li.textContent.trim();
+    if (!text) return;
     if (li.closest('[class*="ingredient"], [id*="ingredient"]')) {
-      ingredientItems.push(li.textContent.trim()); return;
+      ingredientItems.push(text); return;
     }
     if (li.closest('[class*="instruction"], [class*="direction"], [class*="step"], [id*="step"]')) {
-      instructionItems.push(li.textContent.trim()); return;
+      if (isRealStep(text)) instructionItems.push(text); return;
     }
     if (li.closest('[class*="equipment"], [id*="equipment"], [class*="tool"], [id*="tool"]')) {
-      equipmentItems.push(li.textContent.trim());
+      if (text.length > 2) equipmentItems.push(text);
     }
   });
 
   container.querySelectorAll('[class*="equipment"] [class*="name"], [class*="tool"] [class*="name"]').forEach(el => {
     const text = el.textContent.trim();
-    if (text && !equipmentItems.includes(text)) equipmentItems.push(text);
+    if (text.length > 2 && !equipmentItems.includes(text)) equipmentItems.push(text);
   });
 
   return {
