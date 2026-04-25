@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Block all unencrypted HTTP traffic; only HTTPS is allowed -->
+    <base-config cleartextTrafficPermitted="false"/>
+</network-security-config>

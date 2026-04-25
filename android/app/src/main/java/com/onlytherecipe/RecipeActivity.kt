@@ -40,6 +40,9 @@ class RecipeActivity : AppCompatActivity() {
         webView.settings.domStorageEnabled = true
         webView.settings.loadWithOverviewMode = true
         webView.settings.useWideViewPort = true
+        // Prevent the WebView from reading local files or content:// URIs
+        webView.settings.allowFileAccess = false
+        webView.settings.allowContentAccess = false
 
         webView.addJavascriptInterface(Bridge(), "Android")
 
@@ -81,6 +84,10 @@ class RecipeActivity : AppCompatActivity() {
 
         // Mode B: extract a recipe from a URL
         val url = intent.getStringExtra("url") ?: run { finish(); return }
+        if (!url.startsWith("https://") && !url.startsWith("http://")) {
+            finish()
+            return
+        }
         webView.loadUrl(url)
     }
 
@@ -135,7 +142,10 @@ class RecipeActivity : AppCompatActivity() {
         }
 
         val html = buildHtml(recipe)
-        webView.loadDataWithBaseURL(recipe.sourceUrl.ifEmpty { "about:blank" }, html, "text/html", "UTF-8", null)
+        val baseUrl = recipe.sourceUrl.takeIf {
+            it.startsWith("https://") || it.startsWith("http://")
+        } ?: "about:blank"
+        webView.loadDataWithBaseURL(baseUrl, html, "text/html", "UTF-8", null)
     }
 
     private fun buildHtml(recipe: Recipe): String {
@@ -148,12 +158,18 @@ class RecipeActivity : AppCompatActivity() {
         val ingredients   = recipe.ingredients.joinToString("") { "<li>${it.esc()}</li>" }
         val equipment     = recipe.equipment.joinToString("") { "<li>${it.esc()}</li>" }
         val instructions  = buildInstructionsHtml(recipe.instructions)
+        // Only allow http/https in the source link — reject javascript:, data:, etc.
+        val safeSourceUrl = recipe.sourceUrl.takeIf {
+            it.startsWith("https://") || it.startsWith("http://")
+        } ?: ""
 
         return """
 <!DOCTYPE html>
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https: data:; style-src 'unsafe-inline';">
+
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; max-width: 760px;
            margin: 0 auto; padding: 16px 16px 40px; line-height: 1.6; color: #111; background: #fff; }
@@ -184,7 +200,7 @@ class RecipeActivity : AppCompatActivity() {
   ${if (recipe.equipment.isNotEmpty())   """<h2>Equipment</h2><ul>$equipment</ul>""" else ""}
   ${if (recipe.instructions.isNotEmpty()) """<h2>Instructions</h2>$instructions""" else ""}
   ${if (recipe.authorNotes.isNotEmpty()) """<div class="notes"><strong>Author Notes</strong>${recipe.authorNotes.esc()}</div>""" else ""}
-  <p class="source">Source: <a href="${recipe.sourceUrl.esc()}">${recipe.sourceUrl.esc()}</a></p>
+  ${if (safeSourceUrl.isNotEmpty()) """<p class="source">Source: <a href="${safeSourceUrl.esc()}">${safeSourceUrl.esc()}</a></p>""" else ""}
 </body>
 </html>""".trimIndent()
     }
