@@ -22,12 +22,10 @@ class RecipeActivity : AppCompatActivity() {
     private lateinit var saveBtn: Button
     private lateinit var shareBtn: Button
     private lateinit var groceryBtn: Button
-    private lateinit var convertBtn: Button
     private lateinit var notesInput: EditText
 
     private var currentRecipe: Recipe? = null
     private var extractionDone = false
-    private var isMetric = false
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,11 +34,10 @@ class RecipeActivity : AppCompatActivity() {
 
         webView     = findViewById(R.id.webView)
         progressBar = findViewById(R.id.progressBar)
-        saveBtn     = findViewById(R.id.saveBtn)
-        shareBtn    = findViewById(R.id.shareBtn)
-        groceryBtn  = findViewById(R.id.groceryBtn)
-        convertBtn  = findViewById(R.id.convertBtn)
-        notesInput  = findViewById(R.id.notesInput)
+        saveBtn    = findViewById(R.id.saveBtn)
+        shareBtn   = findViewById(R.id.shareBtn)
+        groceryBtn = findViewById(R.id.groceryBtn)
+        notesInput = findViewById(R.id.notesInput)
 
         findViewById<Button>(R.id.backBtn).setOnClickListener { finish() }
 
@@ -61,12 +58,6 @@ class RecipeActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT).show()
                 }
             }
-        }
-
-        convertBtn.setOnClickListener {
-            isMetric = !isMetric
-            convertBtn.text = if (isMetric) "Imperial" else "Metric"
-            renderHtml()
         }
 
         webView.settings.javaScriptEnabled = true
@@ -156,10 +147,9 @@ class RecipeActivity : AppCompatActivity() {
     private fun displayRecipe(recipe: Recipe, isSaved: Boolean) {
         currentRecipe = recipe
         progressBar.visibility = View.GONE
-        saveBtn.visibility     = if (isSaved) View.GONE else View.VISIBLE
-        shareBtn.visibility    = View.VISIBLE
-        groceryBtn.visibility  = if (recipe.ingredients.isEmpty()) View.GONE else View.VISIBLE
-        convertBtn.visibility  = View.VISIBLE
+        saveBtn.visibility    = if (isSaved) View.GONE else View.VISIBLE
+        shareBtn.visibility   = View.VISIBLE
+        groceryBtn.visibility = if (recipe.ingredients.isEmpty()) View.GONE else View.VISIBLE
 
         if (isSaved) {
             notesInput.visibility = View.VISIBLE
@@ -176,7 +166,7 @@ class RecipeActivity : AppCompatActivity() {
 
     private fun renderHtml() {
         val recipe = currentRecipe ?: return
-        val displayed = if (isMetric) with(RecipeConverter) { recipe.withUnits(toMetric = true) } else recipe
+        val displayed = if (AppPrefs.useMetric(this)) with(RecipeConverter) { recipe.withUnits(toMetric = true) } else recipe
         val baseUrl = displayed.sourceUrl.takeIf { it.isSafeUrl() } ?: "about:blank"
         webView.loadDataWithBaseURL(baseUrl, displayed.toHtml(), "text/html", "UTF-8", null)
     }

@@ -100,6 +100,10 @@ class MainActivity : AppCompatActivity() {
                 .setNegativeButton("Later", null)
                 .show()
         }
+
+        findViewById<Button>(R.id.settingsBtn).setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
