@@ -26,7 +26,7 @@ function cleanText(str) {
   if (!str.includes('<')) return str.trim();
   const div = document.createElement('div');
   div.innerHTML = str;
-  div.querySelectorAll('img, figure, figcaption, [class*="caption"], [class*="credit"]').forEach(el => el.remove());
+  div.querySelectorAll('img, figure, figcaption, noscript, [class*="caption"], [class*="credit"]').forEach(el => el.remove());
   return div.textContent.replace(/\s+/g, ' ').trim();
 }
 
