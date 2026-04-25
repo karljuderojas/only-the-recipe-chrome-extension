@@ -176,7 +176,7 @@ class RecipeActivity : AppCompatActivity() {
 
     private fun renderHtml() {
         val recipe = currentRecipe ?: return
-        val displayed = if (isMetric) recipe.withUnits(toMetric = true) else recipe
+        val displayed = if (isMetric) with(RecipeConverter) { recipe.withUnits(toMetric = true) } else recipe
         val baseUrl = displayed.sourceUrl.takeIf { it.isSafeUrl() } ?: "about:blank"
         webView.loadDataWithBaseURL(baseUrl, displayed.toHtml(), "text/html", "UTF-8", null)
     }
