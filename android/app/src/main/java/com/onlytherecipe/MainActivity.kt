@@ -147,12 +147,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun shareRecipe(recipe: Recipe) {
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_SUBJECT, recipe.title)
-            putExtra(Intent.EXTRA_TEXT, recipe.toShareText())
-        }
-        startActivity(Intent.createChooser(intent, "Share recipe via…"))
+        startActivity(Intent.createChooser(recipe.toShareIntent(), "Share recipe via…"))
     }
 
     private fun openRecipe(url: String? = null, savedAt: Long? = null, fromShare: Boolean = false) {

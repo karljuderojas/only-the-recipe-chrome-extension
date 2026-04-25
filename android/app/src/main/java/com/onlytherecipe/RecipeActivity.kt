@@ -46,12 +46,7 @@ class RecipeActivity : AppCompatActivity() {
 
         shareBtn.setOnClickListener {
             currentRecipe?.let { recipe ->
-                val intent = Intent(Intent.ACTION_SEND).apply {
-                    type = "text/plain"
-                    putExtra(Intent.EXTRA_SUBJECT, recipe.title)
-                    putExtra(Intent.EXTRA_TEXT, recipe.toShareText())
-                }
-                startActivity(Intent.createChooser(intent, "Share recipe via…"))
+                startActivity(Intent.createChooser(recipe.toShareIntent(), "Share recipe via…"))
             }
         }
 
@@ -122,7 +117,7 @@ class RecipeActivity : AppCompatActivity() {
 
         // Mode B: extract a recipe from a URL
         val url = intent.getStringExtra("url") ?: run { finish(); return }
-        if (!url.startsWith("https://") && !url.startsWith("http://")) {
+        if (!url.isSafeUrl()) {
             finish()
             return
         }
@@ -182,9 +177,7 @@ class RecipeActivity : AppCompatActivity() {
     private fun renderHtml() {
         val recipe = currentRecipe ?: return
         val displayed = if (isMetric) recipe.withUnits(toMetric = true) else recipe
-        val baseUrl = displayed.sourceUrl.takeIf {
-            it.startsWith("https://") || it.startsWith("http://")
-        } ?: "about:blank"
+        val baseUrl = displayed.sourceUrl.takeIf { it.isSafeUrl() } ?: "about:blank"
         webView.loadDataWithBaseURL(baseUrl, displayed.toHtml(), "text/html", "UTF-8", null)
     }
 }

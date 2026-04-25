@@ -1,5 +1,9 @@
 package com.onlytherecipe
 
+import android.content.Intent
+
+internal fun String.isSafeUrl() = startsWith("https://") || startsWith("http://")
+
 private fun String.esc(): String = this
     .replace("&", "&amp;")
     .replace("<", "&lt;")
@@ -17,16 +21,24 @@ fun String.fmt(): String {
     return parts.joinToString(" ").ifEmpty { this }
 }
 
+private fun Recipe.timingParts(): List<String> = buildList {
+    if (timingPrep.isNotEmpty())  add("Prep: ${timingPrep.fmt()}")
+    if (timingCook.isNotEmpty())  add("Cook: ${timingCook.fmt()}")
+    if (timingTotal.isNotEmpty()) add("Total: ${timingTotal.fmt()}")
+}
+
+fun Recipe.toShareIntent(): Intent = Intent(Intent.ACTION_SEND).apply {
+    type = "text/plain"
+    putExtra(Intent.EXTRA_SUBJECT, title)
+    putExtra(Intent.EXTRA_TEXT, toShareText())
+}
+
 fun Recipe.toShareText(): String {
     val sb = StringBuilder()
     sb.appendLine(title)
     sb.appendLine()
 
-    val timing = buildList {
-        if (timingPrep.isNotEmpty())  add("Prep: ${timingPrep.fmt()}")
-        if (timingCook.isNotEmpty())  add("Cook: ${timingCook.fmt()}")
-        if (timingTotal.isNotEmpty()) add("Total: ${timingTotal.fmt()}")
-    }
+    val timing = timingParts()
     if (timing.isNotEmpty())          sb.appendLine(timing.joinToString(" · "))
     if (recipeYield.isNotEmpty())     sb.appendLine("Yield: $recipeYield")
     if (timing.isNotEmpty() || recipeYield.isNotEmpty()) sb.appendLine()
@@ -75,25 +87,19 @@ fun Recipe.toShareText(): String {
         sb.appendLine()
     }
 
-    val safeUrl = sourceUrl.takeIf { it.startsWith("https://") || it.startsWith("http://") }
+    val safeUrl = sourceUrl.takeIf { it.isSafeUrl() }
     if (safeUrl != null) sb.append("Source: $safeUrl")
 
     return sb.toString().trimEnd()
 }
 
 fun Recipe.toHtml(): String {
-    val timing = buildList {
-        if (timingPrep.isNotEmpty())  add("Prep: ${timingPrep.fmt()}")
-        if (timingCook.isNotEmpty())  add("Cook: ${timingCook.fmt()}")
-        if (timingTotal.isNotEmpty()) add("Total: ${timingTotal.fmt()}")
-    }.joinToString(" &nbsp;·&nbsp; ")
+    val timing = timingParts().joinToString(" &nbsp;·&nbsp; ")
 
     val ingredients  = ingredients.joinToString("") { "<li>${it.esc()}</li>" }
     val equipment    = equipment.joinToString("") { "<li>${it.esc()}</li>" }
     val instructions = buildInstructionsHtml(instructions)
-    val safeSourceUrl = sourceUrl.takeIf {
-        it.startsWith("https://") || it.startsWith("http://")
-    } ?: ""
+    val safeSourceUrl = sourceUrl.takeIf { it.isSafeUrl() } ?: ""
 
     return """
 <!DOCTYPE html>
