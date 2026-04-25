@@ -3,11 +3,8 @@ package com.onlytherecipe
 import android.content.Context
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.File
 
-object RecipeStorage {
-
-    private const val FILE_NAME = "recipes.json"
+object RecipeStorage : JsonFileStorage<Recipe>("recipes.json") {
 
     fun save(context: Context, recipe: Recipe) {
         val list = loadAll(context).toMutableList()
@@ -15,17 +12,6 @@ object RecipeStorage {
         val stamped = recipe.copy(savedAt = System.currentTimeMillis())
         if (idx >= 0) list[idx] = stamped else list.add(0, stamped)
         write(context, list)
-    }
-
-    fun loadAll(context: Context): List<Recipe> {
-        val file = File(context.filesDir, FILE_NAME)
-        if (!file.exists()) return emptyList()
-        return try {
-            val arr = JSONArray(file.readText())
-            (0 until arr.length()).map { fromJson(arr.getJSONObject(it)) }
-        } catch (_: Exception) {
-            emptyList()
-        }
     }
 
     fun getById(context: Context, savedAt: Long): Recipe? =
@@ -44,35 +30,7 @@ object RecipeStorage {
         }
     }
 
-    fun toJsonString(recipe: Recipe): String = toJson(recipe).toString()
-
-    fun fromJsonString(json: String): Recipe = fromJson(JSONObject(json))
-
-    private fun write(context: Context, list: List<Recipe>) {
-        val arr = JSONArray()
-        list.forEach { arr.put(toJson(it)) }
-        File(context.filesDir, FILE_NAME).writeText(arr.toString())
-    }
-
-    private fun toJson(r: Recipe): JSONObject = JSONObject().apply {
-        put("title", r.title)
-        put("description", r.description)
-        put("ingredients", JSONArray(r.ingredients))
-        put("instructions", JSONArray(r.instructions))
-        put("equipment", JSONArray(r.equipment))
-        put("authorNotes", r.authorNotes)
-        put("timingPrep", r.timingPrep)
-        put("timingCook", r.timingCook)
-        put("timingTotal", r.timingTotal)
-        put("recipeYield", r.recipeYield)
-        put("imageUrl", r.imageUrl)
-        put("sourceUrl", r.sourceUrl)
-        put("source", r.source)
-        put("savedAt", r.savedAt)
-        put("notes", r.notes)
-    }
-
-    fun fromJson(obj: JSONObject): Recipe {
+    override fun fromJson(obj: JSONObject): Recipe {
         fun strings(key: String): List<String> {
             val arr = obj.optJSONArray(key) ?: return emptyList()
             return (0 until arr.length()).map { arr.getString(it) }
@@ -94,5 +52,23 @@ object RecipeStorage {
             savedAt      = obj.optLong("savedAt"),
             notes        = obj.optString("notes")
         )
+    }
+
+    override fun toJson(item: Recipe): JSONObject = JSONObject().apply {
+        put("title",        item.title)
+        put("description",  item.description)
+        put("ingredients",  JSONArray(item.ingredients))
+        put("instructions", JSONArray(item.instructions))
+        put("equipment",    JSONArray(item.equipment))
+        put("authorNotes",  item.authorNotes)
+        put("timingPrep",   item.timingPrep)
+        put("timingCook",   item.timingCook)
+        put("timingTotal",  item.timingTotal)
+        put("recipeYield",  item.recipeYield)
+        put("imageUrl",     item.imageUrl)
+        put("sourceUrl",    item.sourceUrl)
+        put("source",       item.source)
+        put("savedAt",      item.savedAt)
+        put("notes",        item.notes)
     }
 }
