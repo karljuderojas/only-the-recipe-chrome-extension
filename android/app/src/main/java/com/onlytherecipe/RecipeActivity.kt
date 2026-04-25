@@ -22,10 +22,12 @@ class RecipeActivity : AppCompatActivity() {
     private lateinit var saveBtn: Button
     private lateinit var shareBtn: Button
     private lateinit var groceryBtn: Button
+    private lateinit var convertBtn: Button
     private lateinit var notesInput: EditText
 
     private var currentRecipe: Recipe? = null
     private var extractionDone = false
+    private var isMetric = false
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +39,7 @@ class RecipeActivity : AppCompatActivity() {
         saveBtn     = findViewById(R.id.saveBtn)
         shareBtn    = findViewById(R.id.shareBtn)
         groceryBtn  = findViewById(R.id.groceryBtn)
+        convertBtn  = findViewById(R.id.convertBtn)
         notesInput  = findViewById(R.id.notesInput)
 
         findViewById<Button>(R.id.backBtn).setOnClickListener { finish() }
@@ -63,6 +66,12 @@ class RecipeActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+
+        convertBtn.setOnClickListener {
+            isMetric = !isMetric
+            convertBtn.text = if (isMetric) "Imperial" else "Metric"
+            renderHtml()
         }
 
         webView.settings.javaScriptEnabled = true
@@ -155,6 +164,7 @@ class RecipeActivity : AppCompatActivity() {
         saveBtn.visibility     = if (isSaved) View.GONE else View.VISIBLE
         shareBtn.visibility    = View.VISIBLE
         groceryBtn.visibility  = if (recipe.ingredients.isEmpty()) View.GONE else View.VISIBLE
+        convertBtn.visibility  = View.VISIBLE
 
         if (isSaved) {
             notesInput.visibility = View.VISIBLE
@@ -166,9 +176,15 @@ class RecipeActivity : AppCompatActivity() {
             }
         }
 
-        val baseUrl = recipe.sourceUrl.takeIf {
+        renderHtml()
+    }
+
+    private fun renderHtml() {
+        val recipe = currentRecipe ?: return
+        val displayed = if (isMetric) recipe.withUnits(toMetric = true) else recipe
+        val baseUrl = displayed.sourceUrl.takeIf {
             it.startsWith("https://") || it.startsWith("http://")
         } ?: "about:blank"
-        webView.loadDataWithBaseURL(baseUrl, recipe.toHtml(), "text/html", "UTF-8", null)
+        webView.loadDataWithBaseURL(baseUrl, displayed.toHtml(), "text/html", "UTF-8", null)
     }
 }

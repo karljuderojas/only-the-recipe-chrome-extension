@@ -30,6 +30,16 @@
             android:layout_weight="1"/>
 
         <Button
+            android:id="@+id/convertBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Metric"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="#7c3aed"
+            android:textSize="13sp"
+            android:visibility="gone"/>
+
+        <Button
             android:id="@+id/groceryBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
