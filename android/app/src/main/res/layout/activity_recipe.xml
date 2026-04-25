@@ -48,6 +48,15 @@
             android:visibility="gone"/>
 
         <Button
+            android:id="@+id/editBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="#374151"
+            android:visibility="gone"/>
+
+        <Button
             android:id="@+id/saveBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

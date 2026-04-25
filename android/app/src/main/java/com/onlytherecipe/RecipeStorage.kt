@@ -21,6 +21,15 @@ object RecipeStorage : JsonFileStorage<Recipe>("recipes.json") {
         write(context, loadAll(context).filter { it.savedAt != savedAt })
     }
 
+    fun update(context: Context, recipe: Recipe) {
+        val list = loadAll(context).toMutableList()
+        val idx = list.indexOfFirst { it.savedAt == recipe.savedAt }
+        if (idx >= 0) {
+            list[idx] = recipe
+            write(context, list)
+        }
+    }
+
     fun updateNotes(context: Context, savedAt: Long, notes: String) {
         val list = loadAll(context).toMutableList()
         val idx = list.indexOfFirst { it.savedAt == savedAt }

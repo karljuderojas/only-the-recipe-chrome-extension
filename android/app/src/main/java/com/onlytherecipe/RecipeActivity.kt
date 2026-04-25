@@ -23,14 +23,26 @@ class RecipeActivity : AppCompatActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            saveBtn.text = "Saved ✓"
-            saveBtn.isEnabled = false
+            val editedSavedAt = result.data?.getLongExtra("saved_at", -1L) ?: -1L
+            if (editedSavedAt > 0) {
+                // Saved recipe was edited — reload and re-render
+                val reloaded = RecipeStorage.getById(this, editedSavedAt)
+                if (reloaded != null) {
+                    currentRecipe = reloaded
+                    renderHtml()
+                }
+            } else {
+                // New recipe saved for the first time
+                saveBtn.text = "Saved ✓"
+                saveBtn.isEnabled = false
+            }
         }
     }
 
     private lateinit var webView: WebView
     private lateinit var progressBar: ProgressBar
     private lateinit var saveBtn: Button
+    private lateinit var editBtn: Button
     private lateinit var shareBtn: Button
     private lateinit var groceryBtn: Button
     private lateinit var notesInput: EditText
@@ -46,6 +58,7 @@ class RecipeActivity : AppCompatActivity() {
         webView     = findViewById(R.id.webView)
         progressBar = findViewById(R.id.progressBar)
         saveBtn    = findViewById(R.id.saveBtn)
+        editBtn    = findViewById(R.id.editBtn)
         shareBtn   = findViewById(R.id.shareBtn)
         groceryBtn = findViewById(R.id.groceryBtn)
         notesInput = findViewById(R.id.notesInput)
@@ -158,10 +171,15 @@ class RecipeActivity : AppCompatActivity() {
         currentRecipe = recipe
         progressBar.visibility = View.GONE
         saveBtn.visibility    = if (isSaved) View.GONE else View.VISIBLE
+        editBtn.visibility    = if (isSaved) View.VISIBLE else View.GONE
         shareBtn.visibility   = View.VISIBLE
         groceryBtn.visibility = if (recipe.ingredients.isEmpty()) View.GONE else View.VISIBLE
 
         if (isSaved) {
+            editBtn.setOnClickListener {
+                EditRecipeActivity.pendingRecipe = currentRecipe
+                editLauncher.launch(Intent(this, EditRecipeActivity::class.java))
+            }
             notesInput.visibility = View.VISIBLE
             notesInput.setText(recipe.notes)
             notesInput.setOnFocusChangeListener { _, hasFocus ->

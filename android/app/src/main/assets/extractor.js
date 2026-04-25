@@ -99,9 +99,18 @@ function flattenInstructions(raw) {
 function extractEquipment(data) {
   const raw = data.tool || data.recipeEquipment || [];
   const items = Array.isArray(raw) ? raw : [raw];
+
+  // Some sites (e.g. Serious Eats) put author/contributor names in the tool field
+  const authorNames = new Set();
+  const authors = Array.isArray(data.author) ? data.author : (data.author ? [data.author] : []);
+  authors.forEach(a => {
+    const name = (typeof a === 'string' ? a : (a.name || '')).trim().toLowerCase();
+    if (name) authorNames.add(name);
+  });
+
   return items
     .map(item => (typeof item === 'string' ? item : item.name || '').trim())
-    .filter(s => s.length > 2);
+    .filter(s => s.length > 2 && !authorNames.has(s.toLowerCase()));
 }
 
 function extractImage(img) {

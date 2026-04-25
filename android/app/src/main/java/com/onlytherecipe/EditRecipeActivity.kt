@@ -38,9 +38,15 @@ class EditRecipeActivity : AppCompatActivity() {
                 instructions = instructionsEdit.text.toString()
                     .split("\n").map { it.trim() }.filter { it.isNotEmpty() }
             )
-            RecipeStorage.save(this, updated)
+            val resultIntent = Intent()
+            if (recipe.savedAt > 0) {
+                RecipeStorage.update(this, updated)
+                resultIntent.putExtra("saved_at", recipe.savedAt)
+            } else {
+                RecipeStorage.save(this, updated)
+            }
             Toast.makeText(this, "Recipe saved.", Toast.LENGTH_SHORT).show()
-            setResult(Activity.RESULT_OK)
+            setResult(Activity.RESULT_OK, resultIntent)
             finish()
         }
     }
