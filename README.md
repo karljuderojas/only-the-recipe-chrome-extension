@@ -16,6 +16,13 @@ A Chrome extension that strips SEO noise from recipe pages — no ads, no life s
 **Android App**
 - [Android — Installation](#android--installation)
 - [Android — How to Use](#android--how-to-use)
+  - [Extracting a recipe from a URL](#extracting-a-recipe-from-a-url)
+  - [Sharing directly from Chrome](#sharing-directly-from-chrome-or-any-browser)
+  - [Your recipe library](#your-recipe-library)
+  - [Grocery list](#grocery-list)
+  - [Personal notes](#personal-notes)
+  - [Unit conversion](#unit-conversion)
+  - [Settings](#settings)
 
 **General**
 - [Features](#features)
@@ -138,33 +145,26 @@ After editing `plugin.json`, reload the extension at `chrome://extensions`.
 
 The Android app lets you extract and save recipes on your phone. It works the same way as the extension — paste a URL, or share directly from Chrome — with no ads, no life story, just the recipe.
 
-### Step 1 — Build the APK via GitHub Actions
+### Step 1 — Download the APK
 
-The APK is built automatically in the cloud every time you push to GitHub. You don't need Android Studio or any development tools installed.
+The APK is built automatically on every push to GitHub and published to the **Releases** page.
 
-1. Push this repo to GitHub if you haven't already:
-   ```
-   git add .
-   git commit -m "Add Android app"
-   git push
-   ```
-2. Open your repo on GitHub and go to the **Actions** tab.
-3. Select the **Build Android APK** workflow and click **Run workflow** (or it triggers automatically on push).
-4. Wait about 5 minutes for the build to finish.
-5. Click the completed run, scroll to **Artifacts**, and download `only-the-recipe-debug`.
-6. Unzip the downloaded file — inside is `app-debug.apk`.
+1. Open the repo on GitHub and click **Releases** (right sidebar).
+2. Expand the latest release and download the `.apk` file.
 
-### Step 2 — Transfer the APK to your phone
+### Step 2 — Transfer to your phone (if needed)
 
-- **USB:** Connect your phone, copy `app-debug.apk` to it.
+If you downloaded the APK on a computer:
+
+- **USB:** Connect your phone and copy the APK to it.
 - **Email / Google Drive:** Send or upload the APK and open it on your phone.
-- **Direct download:** If your repo is public, you can open the Actions artifact link directly in your phone's browser.
+- **Direct download:** Open the Releases page in your phone's browser and download directly.
 
 ### Step 3 — Allow installation from unknown sources
 
 Because this APK isn't from the Play Store, Android requires a one-time permission:
 
-1. On your phone, open the APK file.
+1. Open the APK file on your phone.
 2. Android will prompt you to allow installation from this source — tap **Settings**, enable it, then go back and tap **Install**.
 3. The exact wording varies by Android version and browser/file manager, but the flow is the same on all devices.
 
@@ -172,7 +172,7 @@ Because this APK isn't from the Play Store, Android requires a one-time permissi
 
 Tap **Install**, then **Open**. The app is now on your home screen as **Only The Recipe**.
 
-> **Note:** The APK built by GitHub Actions is a debug build, which is fine for personal use. It will not auto-update — rebuild and reinstall when you make changes.
+> The APK is a debug build, fine for personal use. The app checks for newer versions automatically each time it launches and will prompt you to download if one is available.
 
 ---
 
@@ -203,11 +203,34 @@ This is the fastest way to use the app while browsing.
 Tap **← Back** from any recipe to return to the library. Saved recipes are listed newest first, showing the recipe title and the date saved.
 
 - **Open a saved recipe:** Tap its row.
-- **Delete a recipe:** Tap **Delete** on the right side of its row.
+- **Share a recipe:** Tap **Share** on the right side of its row to send the recipe as plain text.
+- **Delete a recipe:** Long-press its row — a confirmation dialog appears before anything is removed.
+
+### Grocery list
+
+Tap the **Grocery List** tab in the bottom navigation bar.
+
+- **Add ingredients:** Open a recipe and tap **+ List** in the toolbar. All ingredients are added to the list at once.
+- **Check off items:** Tap any item to toggle it. Checked items are crossed out.
+- **Remove an item:** Long-press it for a confirmation prompt.
+- **Clear completed:** Tap **Clear done** in the top-right corner to remove all checked items at once.
 
 ### Personal notes
 
 When viewing a saved recipe, a notes field appears at the bottom of the screen. Type anything — substitutions, tweaks, how it turned out. Notes are saved automatically when you leave the field.
+
+### Unit conversion
+
+Open **Settings** (top-right of the home screen) and toggle **Use Metric Units**. When enabled, all recipes are displayed with metric measurements — temperatures in °C, volumes in ml/L, weights in g/kg. The original saved data is never changed; conversion is applied on the fly each time a recipe is rendered.
+
+### Settings
+
+Tap **Settings** in the top-right corner of the home screen.
+
+| Setting | Details |
+|---|---|
+| Use Metric Units | Convert all recipe measurements to metric when enabled |
+| Version | Shows the currently installed app version |
 
 ### What gets extracted
 
@@ -226,6 +249,8 @@ When viewing a saved recipe, a notes field appears at the bottom of the screen. 
 
 ## Features
 
+**Chrome extension**
+
 | Feature | Details |
 |---|---|
 | Clean view | Hides everything except the recipe using Shadow DOM — ads, sidebars, footers, related posts |
@@ -239,6 +264,19 @@ When viewing a saved recipe, a notes field appears at the bottom of the screen. 
 | Personal notes | Editable per recipe, auto-saved on blur |
 | Cached view | Full-page standalone recipe template, readable offline |
 | First-launch guide | Welcome page opens automatically on install |
+
+**Android app**
+
+| Feature | Details |
+|---|---|
+| URL extraction | Paste any recipe URL — same three-signal cascade as the extension |
+| Share target | Accept URLs shared from Chrome or any browser directly into the app |
+| Recipe library | Recipes saved on-device as JSON; newest first, long-press to delete |
+| Share recipe | Send any saved recipe as formatted plain text via any share target |
+| Grocery list | Add all ingredients from a recipe to a shared checklist in one tap |
+| Unit conversion | Global metric toggle in Settings converts temperatures, volumes, and weights on the fly |
+| Personal notes | Per-recipe notes field, auto-saved on blur |
+| Update checker | Checks GitHub Releases on launch and prompts to download if a newer APK is available |
 
 ---
 
