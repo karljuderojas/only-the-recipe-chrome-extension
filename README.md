@@ -6,11 +6,18 @@ A Chrome extension that strips SEO noise from recipe pages — no ads, no life s
 
 ## Table of Contents
 
+**Chrome Extension**
 - [Installation](#installation)
 - [How to Use](#how-to-use)
 - [Your Recipe Library](#your-recipe-library)
 - [Cached View](#cached-view)
 - [Adding New Sites](#adding-new-sites)
+
+**Android App**
+- [Android — Installation](#android--installation)
+- [Android — How to Use](#android--how-to-use)
+
+**General**
 - [Features](#features)
 - [Storage](#storage)
 - [File Structure](#file-structure)
@@ -124,6 +131,96 @@ Only The Recipe works on most sites automatically using structured data detectio
 4. Use `.classname` for a class, or `#idname` for an ID
 
 After editing `plugin.json`, reload the extension at `chrome://extensions`.
+
+---
+
+## Android — Installation
+
+The Android app lets you extract and save recipes on your phone. It works the same way as the extension — paste a URL, or share directly from Chrome — with no ads, no life story, just the recipe.
+
+### Step 1 — Build the APK via GitHub Actions
+
+The APK is built automatically in the cloud every time you push to GitHub. You don't need Android Studio or any development tools installed.
+
+1. Push this repo to GitHub if you haven't already:
+   ```
+   git add .
+   git commit -m "Add Android app"
+   git push
+   ```
+2. Open your repo on GitHub and go to the **Actions** tab.
+3. Select the **Build Android APK** workflow and click **Run workflow** (or it triggers automatically on push).
+4. Wait about 5 minutes for the build to finish.
+5. Click the completed run, scroll to **Artifacts**, and download `only-the-recipe-debug`.
+6. Unzip the downloaded file — inside is `app-debug.apk`.
+
+### Step 2 — Transfer the APK to your phone
+
+- **USB:** Connect your phone, copy `app-debug.apk` to it.
+- **Email / Google Drive:** Send or upload the APK and open it on your phone.
+- **Direct download:** If your repo is public, you can open the Actions artifact link directly in your phone's browser.
+
+### Step 3 — Allow installation from unknown sources
+
+Because this APK isn't from the Play Store, Android requires a one-time permission:
+
+1. On your phone, open the APK file.
+2. Android will prompt you to allow installation from this source — tap **Settings**, enable it, then go back and tap **Install**.
+3. The exact wording varies by Android version and browser/file manager, but the flow is the same on all devices.
+
+### Step 4 — Install and open
+
+Tap **Install**, then **Open**. The app is now on your home screen as **Only The Recipe**.
+
+> **Note:** The APK built by GitHub Actions is a debug build, which is fine for personal use. It will not auto-update — rebuild and reinstall when you make changes.
+
+---
+
+## Android — How to Use
+
+### Extracting a recipe from a URL
+
+1. Open the app.
+2. Paste a recipe URL into the text box at the top and tap **Get** (or press the keyboard's Go key).
+3. The page loads in the app and the recipe is extracted automatically — the same three-signal cascade as the Chrome extension (JSON-LD → plugin fingerprint → heuristic DOM).
+4. The clean recipe view appears: hero image, timing, ingredients, equipment (if listed), instructions, and author notes.
+5. Tap **Save Recipe** to add it to your library.
+
+### Sharing directly from Chrome (or any browser)
+
+This is the fastest way to use the app while browsing.
+
+1. Find a recipe in Chrome (or any browser) and tap the **Share** button.
+2. In the share sheet, tap **Only The Recipe**.
+3. The recipe loads immediately — the library screen is skipped entirely.
+4. Tap **Save Recipe** if you want to keep it.
+5. Press **Back** and you return to Chrome, right where you left off.
+
+> The app registers itself as a share target for any text/URL shared from any app, not just Chrome.
+
+### Your recipe library
+
+Tap **← Back** from any recipe to return to the library. Saved recipes are listed newest first, showing the recipe title and the date saved.
+
+- **Open a saved recipe:** Tap its row.
+- **Delete a recipe:** Tap **Delete** on the right side of its row.
+
+### Personal notes
+
+When viewing a saved recipe, a notes field appears at the bottom of the screen. Type anything — substitutions, tweaks, how it turned out. Notes are saved automatically when you leave the field.
+
+### What gets extracted
+
+| Section | Details |
+|---|---|
+| Hero image | The recipe's primary photo (`og:image` or largest visible image) |
+| Title | Recipe name |
+| Timing | Prep, cook, and total times |
+| Yield | Serving size or quantity |
+| Ingredients | Full ingredient list |
+| Equipment | Tools needed (when listed by the site) |
+| Instructions | Step-by-step, with section headings when present |
+| Author Notes | Tips, variations, and cook's notes from the recipe author |
 
 ---
 

@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Only The Recipe — Android Mockup</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0f172a;
+      min-height: 100vh;
+      padding: 48px 24px 64px;
+      color: #fff;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.5px;
+    }
+    header h1 span { color: #60a5fa; }
+    header p {
+      margin-top: 8px;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    .screens {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .screen-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .screen-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #64748b;
+    }
+
+    /* ── Phone frame ── */
+    .phone {
+      width: 280px;
+      background: #1e293b;
+      border-radius: 44px;
+      padding: 10px;
+      box-shadow:
+        0 0 0 1px #334155,
+        0 32px 80px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+      position: relative;
+    }
+    .phone::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: -1px;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 22px;
+      background: #1e293b;
+      border-radius: 0 0 16px 16px;
+      z-index: 10;
+    }
+    .phone-screen {
+      background: #fff;
+      border-radius: 36px;
+      overflow: hidden;
+      min-height: 580px;
+      display: flex;
+      flex-direction: column;
+    }
+    .status-bar {
+      background: #1d4ed8;
+      height: 32px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 16px 5px;
+      font-size: 10px;
+      color: rgba(255,255,255,0.9);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .status-icons { display: flex; gap: 5px; align-items: center; }
+
+    /* ── Shared app UI primitives ── */
+    .app-bg { flex: 1; background: #fff; display: flex; flex-direction: column; }
+
+    .app-header {
+      padding: 14px 16px 12px;
+      background: #fff;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .app-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #2563eb;
+      margin-bottom: 10px;
+    }
+    .url-row { display: flex; gap: 8px; align-items: center; }
+    .url-box {
+      flex: 1;
+      padding: 8px 10px;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 11px;
+      color: #94a3b8;
+      background: #f8fafc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .get-btn {
+      background: #2563eb;
+      color: #fff;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .section-title {
+      padding: 10px 16px 4px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #cbd5e1;
+      font-size: 12px;
+      text-align: center;
+      line-height: 1.8;
+      padding: 0 32px;
+      gap: 8px;
+    }
+    .empty-icon { font-size: 40px; opacity: 0.5; }
+
+    .recipe-row {
+      display: flex;
+      align-items: center;
+      padding: 11px 16px;
+      border-bottom: 1px solid #f8fafc;
+    }
+    .recipe-row-info { flex: 1; }
+    .recipe-row-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 2px;
+    }
+    .recipe-row-date { font-size: 10px; color: #94a3b8; }
+    .del-btn {
+      font-size: 10px;
+      color: #ef4444;
+      padding: 4px 8px;
+    }
+
+    /* Recipe view */
+    .toolbar {
+      display: flex;
+      align-items: center;
+      padding: 0 4px 0 2px;
+      height: 46px;
+      border-bottom: 1px solid #f1f5f9;
+      flex-shrink: 0;
+    }
+    .back-btn {
+      font-size: 11px;
+      color: #374151;
+      padding: 0 10px;
+      font-weight: 500;
+    }
+    .save-btn {
+      margin-left: auto;
+      background: #2563eb;
+      color: #fff;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .progress-bar {
+      height: 3px;
+      background: #dbeafe;
+      flex-shrink: 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #2563eb;
+      width: 100%;
+      transition: width 0.3s;
+    }
+    .recipe-hero {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      background: linear-gradient(135deg, #fef9c3 0%, #fde68a 50%, #fbbf24 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 50px;
+      flex-shrink: 0;
+    }
+    .recipe-body {
+      flex: 1;
+      overflow: hidden;
+      padding: 12px 14px 0;
+    }
+    .r-title { font-size: 16px; font-weight: 800; color: #111; margin-bottom: 4px; line-height: 1.3; }
+    .r-timing { font-size: 10px; color: #6b7280; margin-bottom: 10px; }
+    .r-h2 {
+      font-size: 11px; font-weight: 700; border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 3px; margin: 10px 0 6px; color: #111827;
+    }
+    .r-list { padding-left: 14px; }
+    .r-list li { font-size: 10.5px; color: #374151; margin-bottom: 3px; line-height: 1.5; }
+    .r-notes {
+      background: #eff6ff; border-left: 3px solid #2563eb;
+      padding: 8px 10px; border-radius: 4px;
+      font-size: 10px; color: #1e40af; margin-top: 10px; line-height: 1.5;
+    }
+
+    /* Loading state */
+    .loading-overlay {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #94a3b8;
+      font-size: 12px;
+    }
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #e2e8f0;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Share sheet */
+    .webpage-preview {
+      background: #f1f5f9;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .browser-bar {
+      background: #e2e8f0;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .browser-url {
+      flex: 1;
+      background: #fff;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 9px;
+      color: #64748b;
+    }
+    .browser-share-btn {
+      font-size: 14px;
+      color: #2563eb;
+    }
+    .webpage-content {
+      flex: 1;
+      padding: 12px;
+      overflow: hidden;
+    }
+    .webpage-ad {
+      background: #fef2f2;
+      border: 1px dashed #fca5a5;
+      border-radius: 4px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: #f87171;
+      margin-bottom: 8px;
+    }
+    .webpage-para {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      margin-bottom: 5px;
+    }
+    .webpage-para.short { width: 60%; }
+    .webpage-para.med   { width: 80%; }
+    .share-sheet-overlay {
+      background: rgba(15,23,42,0.6);
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .share-sheet {
+      background: #fff;
+      border-radius: 20px 20px 0 0;
+      padding: 14px 16px 20px;
+    }
+    .share-handle {
+      width: 36px; height: 4px; background: #e2e8f0;
+      border-radius: 2px; margin: 0 auto 12px;
+    }
+    .share-sheet-title { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 12px; text-align: center; }
+    .share-apps { display: flex; gap: 16px; overflow: hidden; }
+    .share-app { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .share-app-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; font-size: 22px;
+    }
+    .share-app-label { font-size: 9px; color: #374151; text-align: center; }
+    .share-app.highlighted .share-app-icon {
+      box-shadow: 0 0 0 2.5px #2563eb;
+      background: #eff6ff !important;
+    }
+
+    /* Connector arrows */
+    .flow-arrow {
+      display: flex;
+      align-items: center;
+      color: #334155;
+      font-size: 22px;
+      padding-top: 40px;
+      opacity: 0.6;
+    }
+
+    .flow-label {
+      font-size: 9px;
+      color: #475569;
+      text-align: center;
+      margin-top: 4px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🍽 Only The <span>Recipe</span></h1>
+  <p>Android App — UI Mockup</p>
+</header>
+
+<div class="screens">
+
+  <!-- ── Screen 1: Home (empty) ── -->
+  <div class="screen-wrapper">
+    <div class="screen-label">Home</div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="status-icons">
+            <span>▲</span><span>WiFi</span><span>🔋</span>
+          </div>
+        </div>
+        <div class="app-bg">
+          <div class="app-header">
+            <div class="app-title">Only The Recipe</div>
+            <div class="url-row">
+              <div class="url-box">Paste a recipe URL</div>
+              <div class="get-btn">Get</div>
+            </div>
+          </div>
+          <div class="section-title">Saved Recipes</div>
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <div>No saved recipes yet.<br>Paste a URL above or<br>share from your browser.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Screen 2: Home (with saved recipes) ── -->
+  <div class="screen-wrapper">
+    <div class="screen-label">Library</div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="status-icons"><span>▲</span><span>WiFi</span><span>🔋</span></div>
+        </div>
+        <div class="app-bg">
+          <div class="app-header">
+            <div class="app-title">Only The Recipe</div>
+            <div class="url-row">
+              <div class="url-box">Paste a recipe URL</div>
+              <div class="get-btn">Get</div>
+            </div>
+          </div>
+          <div class="section-title">Saved Recipes</div>
+          <div class="recipe-row">
+            <div class="recipe-row-info">
+              <div class="recipe-row-title">Classic Chocolate Chip Cookies</div>
+              <div class="recipe-row-date">Apr 24, 2026</div>
+            </div>
+            <div class="del-btn">Delete</div>
+          </div>
+          <div class="recipe-row">
+            <div class="recipe-row-info">
+              <div class="recipe-row-title">Creamy Tuscan Chicken Pasta</div>
+              <div class="recipe-row-date">Apr 22, 2026</div>
+            </div>
+            <div class="del-btn">Delete</div>
+          </div>
+          <div class="recipe-row">
+            <div class="recipe-row-info">
+              <div class="recipe-row-title">Sourdough Bread (Beginner)</div>
+              <div class="recipe-row-date">Apr 18, 2026</div>
+            </div>
+            <div class="del-btn">Delete</div>
+          </div>
+          <div class="recipe-row">
+            <div class="recipe-row-info">
+              <div class="recipe-row-title">Thai Green Curry</div>
+              <div class="recipe-row-date">Apr 10, 2026</div>
+            </div>
+            <div class="del-btn">Delete</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrow -->
+  <div class="flow-arrow">→</div>
+
+  <!-- ── Screen 3: Loading / extracting ── -->
+  <div class="screen-wrapper">
+    <div class="screen-label">Extracting…</div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="status-icons"><span>▲</span><span>WiFi</span><span>🔋</span></div>
+        </div>
+        <div class="app-bg">
+          <div class="toolbar">
+            <div class="back-btn">← Back</div>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:65%"></div></div>
+          <div class="loading-overlay">
+            <div class="spinner"></div>
+            <div>Finding the recipe…</div>
+            <div style="font-size:10px;color:#cbd5e1">seriouseats.com</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrow -->
+  <div class="flow-arrow">→</div>
+
+  <!-- ── Screen 4: Clean recipe view ── -->
+  <div class="screen-wrapper">
+    <div class="screen-label">Recipe View</div>
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="status-icons"><span>▲</span><span>WiFi</span><span>🔋</span></div>
+        </div>
+        <div class="app-bg">
+          <div class="toolbar">
+            <div class="back-btn">← Back</div>
+            <div class="save-btn">Save Recipe</div>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+          <div class="recipe-hero">🍪</div>
+          <div class="recipe-body">
+            <div class="r-title">Classic Chocolate Chip Cookies</div>
+            <div class="r-timing">Prep: 15 min &nbsp;·&nbsp; Cook: 12 min &nbsp;·&nbsp; Total: 27 min &nbsp;·&nbsp; Yield: 24 cookies</div>
+            <div class="r-h2">Ingredients</div>
+            <ul class="r-list">
+              <li>2¼ cups all-purpose flour</li>
+              <li>1 tsp baking soda</li>
+              <li>1 tsp salt</li>
+              <li>1 cup (2 sticks) butter, softened</li>
+              <li>¾ cup granulated sugar</li>
+              <li>2 large eggs</li>
+              <li>2 tsp vanilla extract</li>
+              <li>2 cups chocolate chips</li>
+            </ul>
+            <div class="r-h2">Instructions</div>
+            <ol class="r-list">
+              <li>Preheat oven to 375°F.</li>
+              <li>Mix flour, baking soda, and salt in a bowl.</li>
+              <li>Beat butter and sugars until creamy.</li>
+              <li>Add eggs and vanilla to butter mixture.</li>
+              <li>Gradually blend in flour mixture.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Second row: Share flow ── -->
+<div style="margin-top: 56px;">
+  <div style="text-align:center; margin-bottom: 32px;">
+    <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #475569;">Share from Browser Flow</div>
+    <div style="font-size: 13px; color: #64748b; margin-top: 6px;">Tap Share in Chrome → Only The Recipe → Recipe loads directly, Back returns to browser</div>
+  </div>
+
+  <div class="screens">
+
+    <!-- Step 1: Browser with share -->
+    <div class="screen-wrapper">
+      <div class="screen-label">1 · Chrome</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span>9:41</span>
+            <div class="status-icons"><span>▲</span><span>WiFi</span><span>🔋</span></div>
+          </div>
+          <div class="webpage-preview">
+            <div class="browser-bar">
+              <div class="browser-url">seriouseats.com/chocolate-chip-cookies</div>
+              <div class="browser-share-btn">⬆</div>
+            </div>
+            <div class="webpage-content">
+              <div class="webpage-ad">Advertisement</div>
+              <div style="height:12px;background:#1e293b;border-radius:4px;margin-bottom:6px;width:70%;"></div>
+              <div class="webpage-para"></div>
+              <div class="webpage-para med"></div>
+              <div class="webpage-para short"></div>
+              <div class="webpage-ad" style="height:60px;margin-top:8px;">📢 Banner Ad</div>
+              <div class="webpage-para"></div>
+              <div class="webpage-para med"></div>
+            </div>
+            <div class="share-sheet-overlay">
+              <div class="share-sheet">
+                <div class="share-handle"></div>
+                <div class="share-sheet-title">Share via</div>
+                <div class="share-apps">
+                  <div class="share-app">
+                    <div class="share-app-icon" style="background:#e2e8f0;">💬</div>
+                    <div class="share-app-label">Messages</div>
+                  </div>
+                  <div class="share-app highlighted">
+                    <div class="share-app-icon" style="background:#eff6ff;">🍽</div>
+                    <div class="share-app-label">Only The<br>Recipe</div>
+                  </div>
+                  <div class="share-app">
+                    <div class="share-app-icon" style="background:#fef2f2;">✉️</div>
+                    <div class="share-app-label">Mail</div>
+                  </div>
+                  <div class="share-app">
+                    <div class="share-app-icon" style="background:#f0fdf4;">📋</div>
+                    <div class="share-app-label">Copy link</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-label">Tap the share icon<br>then "Only The Recipe"</div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="flow-arrow">→</div>
+
+    <!-- Step 2: Recipe loads directly -->
+    <div class="screen-wrapper">
+      <div class="screen-label">2 · Recipe Loads</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span>9:41</span>
+            <div class="status-icons"><span>▲</span><span>WiFi</span><span>🔋</span></div>
+          </div>
+          <div class="app-bg">
+            <div class="toolbar">
+              <div class="back-btn">← Back</div>
+              <div class="save-btn">Save Recipe</div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+            <div class="recipe-hero">🍪</div>
+            <div class="recipe-body">
+              <div class="r-title">Classic Chocolate Chip Cookies</div>
+              <div class="r-timing">Prep: 15 min &nbsp;·&nbsp; Cook: 12 min &nbsp;·&nbsp; Total: 27 min</div>
+              <div class="r-h2">Ingredients</div>
+              <ul class="r-list">
+                <li>2¼ cups all-purpose flour</li>
+                <li>1 tsp baking soda, 1 tsp salt</li>
+                <li>1 cup butter, softened</li>
+                <li>¾ cup granulated sugar</li>
+                <li>2 large eggs, 2 tsp vanilla</li>
+                <li>2 cups chocolate chips</li>
+              </ul>
+              <div class="r-h2">Instructions</div>
+              <ol class="r-list">
+                <li>Preheat oven to 375°F.</li>
+                <li>Combine dry ingredients.</li>
+                <li>Beat butter and sugars until creamy.</li>
+                <li>Add eggs and vanilla, blend in flour.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-label">RecipeActivity opens directly<br>No library screen in between</div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="flow-arrow">→</div>
+
+    <!-- Step 3: Saved, back to Chrome -->
+    <div class="screen-wrapper">
+      <div class="screen-label">3 · Saved → Back</div>
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="status-bar">
+            <span>9:41</span>
+            <div class="status-icons"><span>▲</span><span>WiFi</span><span>🔋</span></div>
+          </div>
+          <div class="app-bg">
+            <div class="toolbar">
+              <div class="back-btn">← Back</div>
+              <div class="save-btn" style="background:#16a34a;">Saved ✓</div>
+            </div>
+            <div class="progress-bar"><div class="progress-fill"></div></div>
+            <div class="recipe-hero">🍪</div>
+            <div class="recipe-body">
+              <div class="r-title">Classic Chocolate Chip Cookies</div>
+              <div class="r-timing">Prep: 15 min &nbsp;·&nbsp; Cook: 12 min &nbsp;·&nbsp; Total: 27 min</div>
+              <div class="r-h2">Ingredients</div>
+              <ul class="r-list">
+                <li>2¼ cups all-purpose flour</li>
+                <li>1 tsp baking soda, 1 tsp salt</li>
+                <li>1 cup butter, softened</li>
+                <li>2 large eggs, 2 tsp vanilla</li>
+                <li>2 cups chocolate chips</li>
+              </ul>
+              <div class="r-notes">
+                💡 <strong>Author note:</strong> Chilling the dough for 24–36 hrs gives deeper flavor and a chewier texture.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flow-label">Tap Save → green ✓<br>Press Back → returns to Chrome</div>
+    </div>
+
+  </div>
+</div>
+
+<div style="text-align:center; margin-top: 48px; font-size: 11px; color: #334155; line-height: 1.8;">
+  <strong style="color:#60a5fa;">Build instructions:</strong><br>
+  Push to GitHub → Actions tab → Build Android APK → download artifact<br>
+  Transfer APK to phone · Enable "Install from unknown sources" · Install
+</div>
+
+</body>
+</html>
