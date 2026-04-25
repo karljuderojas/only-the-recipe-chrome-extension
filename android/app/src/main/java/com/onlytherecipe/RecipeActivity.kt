@@ -1,6 +1,7 @@
 package com.onlytherecipe
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -12,10 +13,20 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
 
 class RecipeActivity : AppCompatActivity() {
+
+    private val editLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            saveBtn.text = "Saved ✓"
+            saveBtn.isEnabled = false
+        }
+    }
 
     private lateinit var webView: WebView
     private lateinit var progressBar: ProgressBar
@@ -87,9 +98,8 @@ class RecipeActivity : AppCompatActivity() {
 
         saveBtn.setOnClickListener {
             currentRecipe?.let { recipe ->
-                RecipeStorage.save(this, recipe)
-                saveBtn.text = "Saved ✓"
-                saveBtn.isEnabled = false
+                EditRecipeActivity.pendingRecipe = recipe
+                editLauncher.launch(Intent(this, EditRecipeActivity::class.java))
             }
         }
 

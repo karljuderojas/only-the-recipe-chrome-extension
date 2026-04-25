@@ -35,5 +35,10 @@
             android:name=".SettingsActivity"
             android:exported="false"/>
 
+        <activity
+            android:name=".EditRecipeActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
+
     </application>
 </manifest>
