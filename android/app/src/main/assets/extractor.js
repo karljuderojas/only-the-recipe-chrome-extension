@@ -26,8 +26,10 @@ function cleanText(str) {
   if (!str.includes('<')) return str.trim();
   const div = document.createElement('div');
   div.innerHTML = str;
-  div.querySelectorAll('img, figure, figcaption, noscript, [class*="caption"], [class*="credit"]').forEach(el => el.remove());
-  return div.textContent.replace(/\s+/g, ' ').trim();
+  div.querySelectorAll('img, figure, figcaption, noscript, picture, [class*="caption"], [class*="credit"]').forEach(el => el.remove());
+  const text = div.textContent.replace(/\s+/g, ' ').trim();
+  // Fallback: strip any raw tag markup that survived DOM parsing (e.g. inside noscript, malformed tags)
+  return text.includes('<') ? text.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() : text;
 }
 
 // Reject steps that look like category labels or related-recipe titles rather than instructions.
