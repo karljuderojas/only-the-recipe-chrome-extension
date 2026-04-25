@@ -1,6 +1,7 @@
 package com.onlytherecipe
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.webkit.JavascriptInterface
@@ -21,6 +22,8 @@ class RecipeActivity : AppCompatActivity() {
     private lateinit var saveBtn: Button
     private lateinit var notesInput: EditText
 
+    private lateinit var shareBtn: Button
+
     private var currentRecipe: Recipe? = null
     private var extractionDone = false
 
@@ -32,9 +35,12 @@ class RecipeActivity : AppCompatActivity() {
         webView     = findViewById(R.id.webView)
         progressBar = findViewById(R.id.progressBar)
         saveBtn     = findViewById(R.id.saveBtn)
+        shareBtn    = findViewById(R.id.shareBtn)
         notesInput  = findViewById(R.id.notesInput)
 
         findViewById<Button>(R.id.backBtn).setOnClickListener { finish() }
+
+        shareBtn.setOnClickListener { currentRecipe?.let { shareRecipe(it) } }
 
         webView.settings.javaScriptEnabled = true
         webView.settings.domStorageEnabled = true
@@ -123,6 +129,7 @@ class RecipeActivity : AppCompatActivity() {
     private fun displayRecipe(recipe: Recipe, isSaved: Boolean) {
         progressBar.visibility = View.GONE
         saveBtn.visibility     = if (isSaved) View.GONE else View.VISIBLE
+        shareBtn.visibility    = View.VISIBLE
 
         if (isSaved && recipe.notes.isNotEmpty()) {
             notesInput.visibility = View.VISIBLE
@@ -226,6 +233,82 @@ class RecipeActivity : AppCompatActivity() {
         if (hours   != null) parts.add("$hours hr")
         if (minutes != null) parts.add("$minutes min")
         return parts.joinToString(" ").ifEmpty { iso }
+    }
+
+    private fun shareRecipe(recipe: Recipe) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, recipe.title)
+            putExtra(Intent.EXTRA_TEXT, buildShareText(recipe))
+        }
+        startActivity(Intent.createChooser(intent, "Share recipe via…"))
+    }
+
+    private fun buildShareText(recipe: Recipe): String {
+        val sb = StringBuilder()
+
+        sb.appendLine(recipe.title)
+        sb.appendLine()
+
+        val timing = buildList {
+            if (recipe.timingPrep.isNotEmpty())  add("Prep: ${formatDuration(recipe.timingPrep)}")
+            if (recipe.timingCook.isNotEmpty())  add("Cook: ${formatDuration(recipe.timingCook)}")
+            if (recipe.timingTotal.isNotEmpty()) add("Total: ${formatDuration(recipe.timingTotal)}")
+        }
+        if (timing.isNotEmpty())           sb.appendLine(timing.joinToString(" · "))
+        if (recipe.recipeYield.isNotEmpty()) sb.appendLine("Yield: ${recipe.recipeYield}")
+        if (timing.isNotEmpty() || recipe.recipeYield.isNotEmpty()) sb.appendLine()
+
+        if (recipe.description.isNotEmpty()) {
+            sb.appendLine(recipe.description)
+            sb.appendLine()
+        }
+
+        if (recipe.ingredients.isNotEmpty()) {
+            sb.appendLine("INGREDIENTS")
+            recipe.ingredients.forEach { sb.appendLine("• $it") }
+            sb.appendLine()
+        }
+
+        if (recipe.equipment.isNotEmpty()) {
+            sb.appendLine("EQUIPMENT")
+            recipe.equipment.forEach { sb.appendLine("• $it") }
+            sb.appendLine()
+        }
+
+        if (recipe.instructions.isNotEmpty()) {
+            sb.appendLine("INSTRUCTIONS")
+            var stepNum = 1
+            recipe.instructions.forEach { step ->
+                if (step.startsWith("§:")) {
+                    sb.appendLine()
+                    sb.appendLine(step.substring(2).uppercase())
+                } else {
+                    sb.appendLine("$stepNum. $step")
+                    stepNum++
+                }
+            }
+            sb.appendLine()
+        }
+
+        if (recipe.authorNotes.isNotEmpty()) {
+            sb.appendLine("NOTES")
+            sb.appendLine(recipe.authorNotes)
+            sb.appendLine()
+        }
+
+        if (recipe.notes.isNotEmpty()) {
+            sb.appendLine("MY NOTES")
+            sb.appendLine(recipe.notes)
+            sb.appendLine()
+        }
+
+        val safeUrl = recipe.sourceUrl.takeIf {
+            it.startsWith("https://") || it.startsWith("http://")
+        }
+        if (safeUrl != null) sb.append("Source: $safeUrl")
+
+        return sb.toString().trimEnd()
     }
 
     private fun String.esc(): String = this
