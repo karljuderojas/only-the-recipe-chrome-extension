@@ -16,5 +16,27 @@ data class Recipe(
     val sourceUrl: String,
     val source: String,
     val savedAt: Long = 0L,
-    val notes: String = ""
+    val notes: String = "",
+    val nutrition: Nutrition = Nutrition()
 )
+
+// Mirrors Schema.org NutritionInformation. All fields are raw strings as
+// they appear in JSON-LD ("320 calories", "15 g", "450 mg", etc.) — the UI
+// is responsible for any reformatting. Empty string = missing.
+data class Nutrition(
+    val calories: String = "",
+    val servingSize: String = "",
+    val protein: String = "",
+    val carbohydrates: String = "",
+    val fat: String = "",
+    val saturatedFat: String = "",
+    val fiber: String = "",
+    val sugar: String = "",
+    val sodium: String = "",
+    val cholesterol: String = ""
+) {
+    fun isEmpty(): Boolean = calories.isBlank() && servingSize.isBlank() &&
+        protein.isBlank() && carbohydrates.isBlank() && fat.isBlank() &&
+        saturatedFat.isBlank() && fiber.isBlank() && sugar.isBlank() &&
+        sodium.isBlank() && cholesterol.isBlank()
+}

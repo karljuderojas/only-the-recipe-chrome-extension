@@ -23,12 +23,17 @@ const PLUGINS = [
 // Removes images and captions before extracting text so photo credits don't bleed into steps.
 function cleanText(str) {
   if (!str || typeof str !== 'string') return '';
-  if (!str.includes('<')) return str.trim();
+  // Always decode HTML entities (&#039;, &amp;, &nbsp;, …) — some CMSes
+  // HTML-encode their JSON-LD text fields. textarea.innerHTML→value is the
+  // canonical browser-based decode that doesn't execute markup.
+  const ta = document.createElement('textarea');
+  ta.innerHTML = str;
+  const decoded = ta.value;
+  if (!decoded.includes('<')) return decoded.trim();
   const div = document.createElement('div');
-  div.innerHTML = str;
+  div.innerHTML = decoded;
   div.querySelectorAll('img, figure, figcaption, noscript, picture, [class*="caption"], [class*="credit"]').forEach(el => el.remove());
   const text = div.textContent.replace(/\s+/g, ' ').trim();
-  // Fallback: strip any raw tag markup that survived DOM parsing (e.g. inside noscript, malformed tags)
   return text.includes('<') ? text.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim() : text;
 }
 
@@ -71,6 +76,33 @@ function normalizeJsonLd(data) {
     imageUrl:     findHeroImage(null) || extractImage(data.image),
     sourceUrl:    location.href,
     source:       'json-ld',
+    nutrition:    extractNutrition(data.nutrition),
+  };
+}
+
+// Schema.org NutritionInformation. Values are kept as raw strings the way
+// the site published them ("320 calories", "15 g", "450 mg") so we don't
+// throw away unit information. Sites publish per-serving by convention.
+function extractNutrition(n) {
+  const empty = {
+    calories: '', servingSize: '', protein: '', carbohydrates: '',
+    fat: '', saturatedFat: '', fiber: '', sugar: '', sodium: '', cholesterol: '',
+  };
+  if (!n || typeof n !== 'object') return empty;
+  // Some sites wrap nutrition in an array — pick the first object.
+  if (Array.isArray(n)) return extractNutrition(n[0]);
+  const v = (key) => cleanText(typeof n[key] === 'string' ? n[key] : (n[key]?.value || ''));
+  return {
+    calories:      v('calories'),
+    servingSize:   v('servingSize'),
+    protein:       v('proteinContent'),
+    carbohydrates: v('carbohydrateContent'),
+    fat:           v('fatContent'),
+    saturatedFat:  v('saturatedFatContent'),
+    fiber:         v('fiberContent'),
+    sugar:         v('sugarContent'),
+    sodium:        v('sodiumContent'),
+    cholesterol:   v('cholesterolContent'),
   };
 }
 
@@ -252,6 +284,7 @@ function extractFromContainer(container, source) {
     imageUrl:     findHeroImage(container),
     sourceUrl:    location.href,
     source,
+    nutrition:    extractNutrition(null),
   };
 }
 
