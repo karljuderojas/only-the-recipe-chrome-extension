@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Solid hairline above each group header to mark the boundary -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/otr_rule_hairline"
+        android:background="@color/otr_rule"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/otr_space_22"
+        android:paddingEnd="@dimen/otr_space_22"
+        android:paddingTop="@dimen/otr_space_14"
+        android:paddingBottom="@dimen/otr_space_8">
+
+        <TextView
+            android:id="@+id/groupName"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.OTR.SectionLabel"
+            android:maxLines="2"
+            android:ellipsize="end"/>
+
+        <TextView
+            android:id="@+id/groupCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.OTR.MonoNumber"
+            android:layout_marginStart="@dimen/otr_space_10"/>
+
+        <ImageView
+            android:id="@+id/groupChevron"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_marginStart="@dimen/otr_space_10"
+            android:src="@drawable/ic_otr_chevron_down"
+            app:tint="@color/otr_muted"
+            android:contentDescription="@null"/>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Mid-stream section header inside the Method list — used when an instruction
+     starts with "§:" (e.g. "§:For the sauce"). Italic 18 serif, hairline rule. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_marginTop="@dimen/otr_space_8"
+    android:layout_marginBottom="@dimen/otr_space_12">
+
+    <TextView
+        android:id="@+id/sectionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.OTR.SectionLabel"/>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="@dimen/otr_rule_hairline"
+        android:background="@color/otr_rule"
+        android:layout_marginStart="@dimen/otr_space_10"/>
+</LinearLayout>

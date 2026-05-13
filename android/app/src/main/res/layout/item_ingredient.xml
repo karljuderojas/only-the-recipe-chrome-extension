@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="7dp"
+    android:paddingBottom="7dp">
+
+    <TextView
+        android:id="@+id/ingredientQty"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/jetbrains_mono"
+        android:textFontWeight="500"
+        android:textSize="11sp"
+        android:textColor="@color/otr_accent"
+        android:paddingTop="1dp"
+        android:includeFontPadding="false"/>
+
+    <TextView
+        android:id="@+id/ingredientName"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.OTR.Body"
+        android:includeFontPadding="true"
+        android:requiresFadingEdge="none"
+        android:fadingEdgeLength="0dp"
+        android:paddingBottom="8dp"
+        android:layout_marginStart="@dimen/otr_space_14"/>
+</LinearLayout>

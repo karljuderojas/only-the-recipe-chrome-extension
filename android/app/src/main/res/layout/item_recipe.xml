@@ -1,47 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:paddingStart="16dp"
-    android:paddingEnd="8dp"
-    android:paddingTop="12dp"
-    android:paddingBottom="12dp"
+    android:orientation="vertical"
     android:background="?attr/selectableItemBackground">
 
+    <!-- Top hairline rule — hidden for the first row (handled in adapter) -->
+    <View
+        android:id="@+id/rowDivider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/otr_rule_hairline"
+        android:background="@color/otr_rule"/>
+
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/otr_space_22"
+        android:paddingEnd="@dimen/otr_space_22"
+        android:paddingTop="@dimen/otr_space_14"
+        android:paddingBottom="@dimen/otr_space_14">
 
+        <!-- Index "01", "02"... -->
         <TextView
-            android:id="@+id/recipeTitle"
-            android:layout_width="wrap_content"
+            android:id="@+id/recipeIndex"
+            android:layout_width="22dp"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="#111827"
-            android:maxLines="2"
-            android:ellipsize="end"/>
+            android:textAppearance="@style/TextAppearance.OTR.MonoNumber"
+            android:textAlignment="textEnd"
+            android:paddingTop="@dimen/otr_space_4"
+            android:layout_marginEnd="@dimen/otr_space_14"/>
 
-        <TextView
-            android:id="@+id/recipeDate"
-            android:layout_width="wrap_content"
+        <!-- Title + meta -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="#9ca3af"
-            android:layout_marginTop="2dp"/>
+            android:orientation="vertical"
+            android:layout_marginEnd="@dimen/otr_space_14">
+
+            <TextView
+                android:id="@+id/recipeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.OTR.RecipeRowTitle"
+                android:maxLines="2"
+                android:ellipsize="end"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="@dimen/otr_space_4">
+
+                <TextView
+                    android:id="@+id/recipeSource"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.OTR.RecipeMeta"/>
+
+                <View
+                    android:id="@+id/metaDot"
+                    android:layout_width="2dp"
+                    android:layout_height="2dp"
+                    android:background="@drawable/shape_meta_dot"
+                    android:layout_marginStart="@dimen/otr_space_8"
+                    android:layout_marginEnd="@dimen/otr_space_8"/>
+
+                <TextView
+                    android:id="@+id/recipeDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.OTR.MonoNumber"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/recipeShareBtn"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:paddingTop="@dimen/otr_space_4"
+            android:src="@drawable/ic_otr_share"
+            app:tint="@color/otr_muted"
+            android:scaleType="centerInside"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Share recipe"/>
     </LinearLayout>
-
-    <Button
-        android:id="@+id/recipeShareBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Share"
-        style="?android:attr/borderlessButtonStyle"
-        android:textColor="#2563eb"
-        android:layout_marginStart="8dp"/>
-
 </LinearLayout>

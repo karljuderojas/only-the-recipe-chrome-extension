@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -18,27 +19,34 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var urlInput: EditText
     private lateinit var recipeList: RecyclerView
-    private lateinit var emptyView: TextView
+    private lateinit var emptyView: View
+    private lateinit var savedHeader: View
+    private lateinit var savedCount: TextView
     private lateinit var recipeAdapter: RecipeAdapter
 
     private lateinit var libraryContainer: LinearLayout
     private lateinit var groceryContainer: LinearLayout
     private lateinit var groceryList: RecyclerView
-    private lateinit var groceryEmptyView: TextView
+    private lateinit var groceryEmptyView: View
+    private lateinit var groceryToBuyCount: TextView
     private lateinit var groceryAdapter: GroceryAdapter
     private lateinit var bottomNav: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        applySystemBarInsets()
 
         urlInput          = findViewById(R.id.urlInput)
         recipeList        = findViewById(R.id.recipeList)
         emptyView         = findViewById(R.id.emptyView)
+        savedHeader       = findViewById(R.id.savedHeader)
+        savedCount        = findViewById(R.id.savedCount)
         libraryContainer  = findViewById(R.id.libraryContainer)
         groceryContainer  = findViewById(R.id.groceryContainer)
         groceryList       = findViewById(R.id.groceryList)
         groceryEmptyView  = findViewById(R.id.groceryEmptyView)
+        groceryToBuyCount = findViewById(R.id.groceryToBuyCount)
         bottomNav         = findViewById(R.id.bottomNav)
 
         recipeAdapter = RecipeAdapter(
@@ -65,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         groceryList.layoutManager = LinearLayoutManager(this)
         groceryList.adapter = groceryAdapter
 
-        findViewById<Button>(R.id.goBtn).setOnClickListener {
+        findViewById<TextView>(R.id.goBtn).setOnClickListener {
             val url = urlInput.text.toString().trim()
             if (url.isNotEmpty()) openRecipe(url = url)
         }
@@ -75,7 +83,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        findViewById<Button>(R.id.clearDoneBtn).setOnClickListener {
+        findViewById<TextView>(R.id.clearDoneBtn).setOnClickListener {
             GroceryStorage.clearChecked(this)
             refreshGrocery()
         }
@@ -89,6 +97,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         handleShareIntent(intent)
+        handleTabExtra(intent)
 
         UpdateChecker.check(this) { latestTag, apkUrl ->
             AlertDialog.Builder(this)
@@ -101,7 +110,7 @@ class MainActivity : AppCompatActivity() {
                 .show()
         }
 
-        findViewById<Button>(R.id.settingsBtn).setOnClickListener {
+        findViewById<ImageButton>(R.id.settingsBtn).setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
     }
@@ -109,6 +118,22 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handleShareIntent(intent)
+        handleTabExtra(intent)
+    }
+
+    // Set by RecipeActivity's bottom nav when the user taps Recipes/Grocery
+    // from a recipe detail. Routes MainActivity to the chosen tab.
+    private fun handleTabExtra(intent: Intent) {
+        when (intent.getStringExtra("tab")) {
+            "grocery" -> {
+                showGrocery()
+                bottomNav.selectedItemId = R.id.nav_grocery
+            }
+            "library" -> {
+                showLibrary()
+                bottomNav.selectedItemId = R.id.nav_library
+            }
+        }
     }
 
     override fun onResume() {
@@ -132,15 +157,20 @@ class MainActivity : AppCompatActivity() {
     private fun refreshLibrary() {
         val recipes = RecipeStorage.loadAll(this)
         recipeAdapter.submitList(recipes)
-        emptyView.visibility  = if (recipes.isEmpty()) View.VISIBLE else View.GONE
-        recipeList.visibility = if (recipes.isEmpty()) View.GONE    else View.VISIBLE
+        val isEmpty = recipes.isEmpty()
+        emptyView.visibility    = if (isEmpty) View.VISIBLE else View.GONE
+        savedHeader.visibility  = if (isEmpty) View.GONE    else View.VISIBLE
+        recipeList.visibility   = if (isEmpty) View.GONE    else View.VISIBLE
+        savedCount.text         = recipes.size.toString()
     }
 
     private fun refreshGrocery() {
         val items = GroceryStorage.loadAll(this)
-        groceryAdapter.submitList(items)
+        groceryAdapter.submitItems(items)
         groceryEmptyView.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
         groceryList.visibility      = if (items.isEmpty()) View.GONE    else View.VISIBLE
+        val remaining = items.count { !it.checked }
+        groceryToBuyCount.text = "$remaining to buy"
     }
 
     private fun handleShareIntent(intent: Intent) {

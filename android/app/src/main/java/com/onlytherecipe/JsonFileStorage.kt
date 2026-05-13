@@ -24,4 +24,12 @@ abstract class JsonFileStorage<T>(private val fileName: String) {
         items.forEach { arr.put(toJson(it)) }
         File(context.filesDir, fileName).writeText(arr.toString())
     }
+
+    // Pretty-printed JSON of every stored row — for the user-facing export
+    // action. Internal callers should use the protected toJson via write().
+    fun exportJson(context: Context): String {
+        val arr = JSONArray()
+        loadAll(context).forEach { arr.put(toJson(it)) }
+        return arr.toString(2)
+    }
 }

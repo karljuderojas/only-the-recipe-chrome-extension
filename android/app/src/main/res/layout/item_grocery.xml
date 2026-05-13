@@ -2,19 +2,45 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:paddingStart="8dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="4dp"
-    android:paddingBottom="4dp"
+    android:orientation="vertical"
     android:background="?attr/selectableItemBackground">
 
-    <CheckBox
-        android:id="@+id/groceryCheck"
+    <!-- Top dotted divider. Adapter manages layerType=software since dashed
+         strokes don't render under hardware acceleration. -->
+    <View
+        android:id="@+id/itemDivider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/divider_dotted_horizontal"/>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:textColor="#111827"/>
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/otr_space_22"
+        android:paddingEnd="@dimen/otr_space_22"
+        android:paddingTop="11dp"
+        android:paddingBottom="11dp">
 
+        <CheckBox
+            android:id="@+id/groceryCheck"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:background="@null"
+            android:button="@drawable/checkbox_circle"
+            android:padding="0dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"/>
+
+        <TextView
+            android:id="@+id/groceryText"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.OTR.GroceryItem"
+            android:paddingBottom="4dp"
+            android:includeFontPadding="true"
+            android:layout_marginStart="@dimen/otr_space_14"/>
+    </LinearLayout>
 </LinearLayout>

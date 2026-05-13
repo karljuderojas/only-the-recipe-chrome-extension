@@ -1,100 +1,623 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- Recipe Detail. The WebView for Mode B extraction is attached
+     programmatically by RecipeActivity (1×1 dp, alpha 0) — Mode A never
+     instantiates one. The rest of the screen is native. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootFrame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#fff">
+    android:background="@color/otr_bg">
 
-    <!-- Toolbar -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="4dp"
-        android:paddingEnd="8dp"
-        android:background="#fff"
-        android:elevation="4dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/backBtn"
-            android:layout_width="wrap_content"
+        <!-- Toolbar -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="← Back"
-            style="?android:attr/borderlessButtonStyle"
-            android:textColor="#374151"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="@dimen/otr_space_18"
+            android:paddingEnd="@dimen/otr_space_18"
+            android:paddingTop="@dimen/otr_space_14"
+            android:paddingBottom="@dimen/otr_space_6">
+
+            <TextView
+                android:id="@+id/backBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="← Library"
+                android:textAppearance="@style/TextAppearance.OTR.MonoButtonMuted"
+                android:paddingTop="@dimen/otr_space_4"
+                android:paddingBottom="@dimen/otr_space_4"
+                android:paddingEnd="@dimen/otr_space_8"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/saveBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save"
+                android:textAppearance="@style/TextAppearance.OTR.MonoButton"
+                android:paddingTop="@dimen/otr_space_4"
+                android:paddingBottom="@dimen/otr_space_4"
+                android:paddingStart="@dimen/otr_space_8"
+                android:paddingEnd="@dimen/otr_space_8"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/shareBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Share"
+                android:textAppearance="@style/TextAppearance.OTR.MonoButtonMuted"
+                android:paddingTop="@dimen/otr_space_4"
+                android:paddingBottom="@dimen/otr_space_4"
+                android:paddingStart="@dimen/otr_space_8"
+                android:paddingEnd="@dimen/otr_space_8"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/editBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit"
+                android:textAppearance="@style/TextAppearance.OTR.MonoButtonMuted"
+                android:paddingTop="@dimen/otr_space_4"
+                android:paddingBottom="@dimen/otr_space_4"
+                android:paddingStart="@dimen/otr_space_8"
+                android:paddingEnd="@dimen/otr_space_8"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/groceryBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+ List"
+                android:textAppearance="@style/TextAppearance.OTR.MonoButton"
+                android:paddingTop="@dimen/otr_space_4"
+                android:paddingBottom="@dimen/otr_space_4"
+                android:paddingStart="@dimen/otr_space_8"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone"/>
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:max="100"
+            android:progressTint="@color/otr_accent"
+            android:indeterminateTint="@color/otr_accent"
+            android:visibility="gone"/>
+
+        <ScrollView
+            android:id="@+id/recipeScroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:overScrollMode="never"
+            android:requiresFadingEdge="none"
+            android:fadingEdgeLength="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/otr_space_24">
+
+                <!-- Hero. 1dp padding exposes the stroke from the background
+                     drawable so the rule shows around the image. -->
+                <FrameLayout
+                    android:id="@+id/heroFrame"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:layout_marginStart="@dimen/otr_space_18"
+                    android:layout_marginEnd="@dimen/otr_space_18"
+                    android:layout_marginTop="@dimen/otr_space_8"
+                    android:padding="1dp"
+                    android:background="@drawable/bg_hero_placeholder">
+
+                    <ImageView
+                        android:id="@+id/heroImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:contentDescription="@null"/>
+
+                    <TextView
+                        android:id="@+id/heroPlaceholderLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|start"
+                        android:layout_margin="@dimen/otr_space_12"
+                        android:text="no image"
+                        android:textAppearance="@style/TextAppearance.OTR.MonoCaption"
+                        android:visibility="gone"/>
+                </FrameLayout>
+
+                <!-- Title block -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/otr_space_22"
+                    android:paddingEnd="@dimen/otr_space_22"
+                    android:paddingTop="@dimen/otr_space_18"
+                    android:paddingBottom="@dimen/otr_space_4">
+
+                    <TextView
+                        android:id="@+id/recipeKicker"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.OTR.MonoCaption"
+                        android:textColor="@color/otr_accent"
+                        android:visibility="gone"/>
+
+                    <TextView
+                        android:id="@+id/recipeTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.OTR.DisplaySmall"
+                        android:layout_marginTop="@dimen/otr_space_6"/>
+
+                    <TextView
+                        android:id="@+id/recipeDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.OTR.BodySmall"
+                        android:layout_marginTop="@dimen/otr_space_10"
+                        android:visibility="gone"/>
+
+                    <TextView
+                        android:id="@+id/recipeAttribution"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/cormorant_garamond"
+                        android:textStyle="italic"
+                        android:textSize="13sp"
+                        android:textColor="@color/otr_muted"
+                        android:includeFontPadding="false"
+                        android:layout_marginTop="@dimen/otr_space_10"
+                        android:visibility="gone"/>
+                </LinearLayout>
+
+                <!-- Timing strip -->
+                <LinearLayout
+                    android:id="@+id/timingStrip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="@dimen/otr_space_22"
+                    android:layout_marginEnd="@dimen/otr_space_22"
+                    android:layout_marginTop="@dimen/otr_space_16"
+                    android:visibility="gone">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/otr_rule_hairline"
+                        android:background="@color/otr_rule"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/timingPrepCol"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:paddingTop="@dimen/otr_space_10"
+                            android:paddingBottom="@dimen/otr_space_10">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Prep"
+                                android:textAppearance="@style/TextAppearance.OTR.TimingLabel"/>
+
+                            <TextView
+                                android:id="@+id/timingPrepValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.OTR.TimingValue"
+                                android:layout_marginTop="@dimen/otr_space_2"/>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="@dimen/otr_rule_hairline"
+                            android:layout_height="match_parent"
+                            android:background="@color/otr_rule"/>
+
+                        <LinearLayout
+                            android:id="@+id/timingCookCol"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:paddingTop="@dimen/otr_space_10"
+                            android:paddingBottom="@dimen/otr_space_10">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Cook"
+                                android:textAppearance="@style/TextAppearance.OTR.TimingLabel"/>
+
+                            <TextView
+                                android:id="@+id/timingCookValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.OTR.TimingValue"
+                                android:layout_marginTop="@dimen/otr_space_2"/>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="@dimen/otr_rule_hairline"
+                            android:layout_height="match_parent"
+                            android:background="@color/otr_rule"/>
+
+                        <LinearLayout
+                            android:id="@+id/timingTotalCol"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:paddingTop="@dimen/otr_space_10"
+                            android:paddingBottom="@dimen/otr_space_10">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Total"
+                                android:textAppearance="@style/TextAppearance.OTR.TimingLabel"/>
+
+                            <TextView
+                                android:id="@+id/timingTotalValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="@style/TextAppearance.OTR.TimingValue"
+                                android:layout_marginTop="@dimen/otr_space_2"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/otr_rule_hairline"
+                        android:background="@color/otr_rule"/>
+                </LinearLayout>
+
+                <!-- Ingredients section -->
+                <LinearLayout
+                    android:id="@+id/ingredientsSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/otr_space_22"
+                    android:paddingEnd="@dimen/otr_space_22"
+                    android:paddingTop="@dimen/otr_space_20"
+                    android:paddingBottom="@dimen/otr_space_10"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="@dimen/otr_space_8">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ingredients"
+                            android:textAppearance="@style/TextAppearance.OTR.SectionLabel"/>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="@dimen/otr_rule_hairline"
+                            android:background="@color/otr_rule"
+                            android:layout_marginStart="@dimen/otr_space_10"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ingredientsList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+                </LinearLayout>
+
+                <!-- Equipment section (between ingredients and method) -->
+                <LinearLayout
+                    android:id="@+id/equipmentSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/otr_space_22"
+                    android:paddingEnd="@dimen/otr_space_22"
+                    android:paddingTop="@dimen/otr_space_10"
+                    android:paddingBottom="@dimen/otr_space_10"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="@dimen/otr_space_8">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Equipment"
+                            android:textAppearance="@style/TextAppearance.OTR.SectionLabel"/>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="@dimen/otr_rule_hairline"
+                            android:background="@color/otr_rule"
+                            android:layout_marginStart="@dimen/otr_space_10"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/equipmentList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+                </LinearLayout>
+
+                <!-- Method section -->
+                <LinearLayout
+                    android:id="@+id/methodSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/otr_space_22"
+                    android:paddingEnd="@dimen/otr_space_22"
+                    android:paddingTop="@dimen/otr_space_12"
+                    android:paddingBottom="@dimen/otr_space_24"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="@dimen/otr_space_10">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Method"
+                            android:textAppearance="@style/TextAppearance.OTR.SectionLabel"/>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="@dimen/otr_rule_hairline"
+                            android:background="@color/otr_rule"
+                            android:layout_marginStart="@dimen/otr_space_10"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/methodList"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+
+                    <!-- Cook's note card -->
+                    <LinearLayout
+                        android:id="@+id/noteCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_note_card"
+                        android:paddingStart="@dimen/otr_space_14"
+                        android:paddingEnd="@dimen/otr_space_14"
+                        android:paddingTop="@dimen/otr_space_12"
+                        android:paddingBottom="@dimen/otr_space_12"
+                        android:layout_marginTop="@dimen/otr_space_14"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Cook's note"
+                            android:textAppearance="@style/TextAppearance.OTR.MonoNoteKicker"
+                            android:layout_marginBottom="@dimen/otr_space_4"/>
+
+                        <TextView
+                            android:id="@+id/noteBody"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.OTR.NoteBody"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Nutrition section -->
+                <LinearLayout
+                    android:id="@+id/nutritionSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/otr_space_22"
+                    android:paddingEnd="@dimen/otr_space_22"
+                    android:paddingTop="@dimen/otr_space_10"
+                    android:paddingBottom="@dimen/otr_space_20"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="@dimen/otr_space_8">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nutrition"
+                            android:textAppearance="@style/TextAppearance.OTR.SectionLabel"/>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="@dimen/otr_rule_hairline"
+                            android:background="@color/otr_rule"
+                            android:layout_marginStart="@dimen/otr_space_10"/>
+
+                        <TextView
+                            android:id="@+id/nutritionServingSize"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearance.OTR.MonoNumber"
+                            android:textColor="@color/otr_muted"
+                            android:layout_marginStart="@dimen/otr_space_10"
+                            android:visibility="gone"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/nutritionGrid"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"/>
+                </LinearLayout>
+
+                <!-- Source URL footer -->
+                <LinearLayout
+                    android:id="@+id/sourceSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/otr_space_22"
+                    android:paddingEnd="@dimen/otr_space_22"
+                    android:paddingTop="@dimen/otr_space_10"
+                    android:paddingBottom="@dimen/otr_space_18"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="@dimen/otr_space_6">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Source"
+                            android:textAppearance="@style/TextAppearance.OTR.MonoCaption"/>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="@dimen/otr_rule_hairline"
+                            android:background="@color/otr_rule"
+                            android:layout_marginStart="@dimen/otr_space_10"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/sourceUrl"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.OTR.BodySmall"
+                        android:textColor="@color/otr_accent"
+                        android:autoLink="web"
+                        android:linksClickable="true"
+                        android:textIsSelectable="true"
+                        android:paddingBottom="4dp"
+                        android:includeFontPadding="true"
+                        android:requiresFadingEdge="none"/>
+                </LinearLayout>
+
+                <!-- My Notes (Mode A only) -->
+                <LinearLayout
+                    android:id="@+id/myNotesSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/otr_space_22"
+                    android:paddingEnd="@dimen/otr_space_22"
+                    android:paddingTop="@dimen/otr_space_10"
+                    android:paddingBottom="@dimen/otr_space_20"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="@dimen/otr_space_8">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="My notes"
+                            android:textAppearance="@style/TextAppearance.OTR.SectionLabel"/>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="@dimen/otr_rule_hairline"
+                            android:background="@color/otr_rule"
+                            android:layout_marginStart="@dimen/otr_space_10"/>
+                    </LinearLayout>
+
+                    <EditText
+                        android:id="@+id/notesInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Personal notes (auto-saved)"
+                        android:textAppearance="@style/TextAppearance.OTR.Body"
+                        android:textColorHint="@color/otr_muted"
+                        android:background="@drawable/bg_notes_card"
+                        android:padding="@dimen/otr_space_12"
+                        android:gravity="top"
+                        android:minLines="3"
+                        android:maxLines="8"
+                        android:inputType="textMultiLine|textCapSentences"/>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
 
         <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/otr_rule_hairline"
+            android:background="@color/otr_rule"/>
 
-        <Button
-            android:id="@+id/groceryBtn"
-            android:layout_width="wrap_content"
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="+ List"
-            style="?android:attr/borderlessButtonStyle"
-            android:textColor="#16a34a"
-            android:visibility="gone"/>
-
-        <Button
-            android:id="@+id/shareBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Share"
-            style="?android:attr/borderlessButtonStyle"
-            android:textColor="#2563eb"
-            android:visibility="gone"/>
-
-        <Button
-            android:id="@+id/editBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Edit"
-            style="?android:attr/borderlessButtonStyle"
-            android:textColor="#374151"
-            android:visibility="gone"/>
-
-        <Button
-            android:id="@+id/saveBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Save Recipe"
-            android:backgroundTint="#2563eb"
-            android:layout_marginStart="4dp"
-            android:visibility="gone"/>
+            app:menu="@menu/bottom_nav_menu"/>
     </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:max="100"
-        android:progressTint="#2563eb"/>
-
-    <WebView
-        android:id="@+id/webView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"/>
-
-    <EditText
-        android:id="@+id/notesInput"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Personal notes (auto-saved)"
-        android:minLines="2"
-        android:maxLines="5"
-        android:gravity="top"
-        android:inputType="textMultiLine|textCapSentences"
-        android:background="#f0f4ff"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        android:textSize="14sp"
-        android:visibility="gone"/>
-
-</LinearLayout>
+</FrameLayout>
