@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- TextAppearance styles for the editorial type system.
+         Letter-spacing is em (px ÷ font-size from the handoff). -->
+
+    <!-- Display: Cormorant Garamond italic 40, line-height 1.0, -0.025em -->
+    <style name="TextAppearance.OTR.Display" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/cormorant_garamond</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:textColor">@color/otr_ink</item>
+        <item name="android:lineSpacingMultiplier">1.0</item>
+        <item name="android:letterSpacing">-0.025</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Display small: Recipe title — Cormorant 30/1.05, -0.017em -->
+    <style name="TextAppearance.OTR.DisplaySmall" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/cormorant_garamond</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@color/otr_ink</item>
+        <item name="android:lineSpacingMultiplier">1.05</item>
+        <item name="android:letterSpacing">-0.017</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Heading: empty-state title — Cormorant italic 22/1.15 -->
+    <style name="TextAppearance.OTR.Heading" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/cormorant_garamond</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/otr_ink</item>
+        <item name="android:lineSpacingMultiplier">1.15</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Section label: "Saved", "Ingredients", "Method" — Cormorant italic 18 -->
+    <style name="TextAppearance.OTR.SectionLabel" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/cormorant_garamond</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/otr_ink</item>
+        <item name="android:lineSpacingMultiplier">1.0</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Recipe row title: Cormorant 19/1.15 -->
+    <style name="TextAppearance.OTR.RecipeRowTitle" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/cormorant_garamond</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:textColor">@color/otr_ink</item>
+        <item name="android:lineSpacingMultiplier">1.15</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Settings row label: Cormorant 16/1.2 -->
+    <style name="TextAppearance.OTR.SettingsRowLabel" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/cormorant_garamond</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/otr_ink</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Timing value (Prep/Cook/Total numbers): Cormorant 16 -->
+    <style name="TextAppearance.OTR.TimingValue" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/cormorant_garamond</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/otr_ink</item>
+        <item name="android:lineSpacingMultiplier">1.0</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Method numeral: Cormorant italic 22, accent color -->
+    <style name="TextAppearance.OTR.MethodNumeral" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/cormorant_garamond</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/otr_accent</item>
+        <item name="android:lineSpacingMultiplier">1.0</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Note body: Cormorant italic 13/1.5, noteInk.
+         lineSpacingExtra over lineSpacingMultiplier because the latter
+         doesn't include the spacing in wrap_content height, clipping last lines. -->
+    <style name="TextAppearance.OTR.NoteBody" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/cormorant_garamond</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/otr_note_ink</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+    </style>
+
+    <!-- Body: Manrope 13.5, effective line height ~19sp -->
+    <style name="TextAppearance.OTR.Body" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/manrope</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">13.5sp</item>
+        <item name="android:textColor">@color/otr_ink</item>
+        <item name="android:lineSpacingExtra">5sp</item>
+    </style>
+
+    <!-- Body small: Manrope 12.5, effective line height ~19sp, muted -->
+    <style name="TextAppearance.OTR.BodySmall" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/manrope</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">12.5sp</item>
+        <item name="android:textColor">@color/otr_muted</item>
+        <item name="android:lineSpacingExtra">7sp</item>
+    </style>
+
+    <!-- Grocery item: Manrope 14, effective ~18sp line height -->
+    <style name="TextAppearance.OTR.GroceryItem" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/manrope</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/otr_ink</item>
+        <item name="android:lineSpacingExtra">4sp</item>
+    </style>
+
+    <!-- Recipe meta (source name): Manrope 11/1.3, muted -->
+    <style name="TextAppearance.OTR.RecipeMeta" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/manrope</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/otr_muted</item>
+        <item name="android:lineSpacingMultiplier">1.3</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Mono caption ("NO. 01 — LIBRARY"): JetBrains Mono 10 uppercase +0.018em -->
+    <style name="TextAppearance.OTR.MonoCaption" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/otr_muted</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.018</item>
+        <item name="android:lineSpacingMultiplier">1.0</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Mono number/qty: JetBrains Mono 10-11 -->
+    <style name="TextAppearance.OTR.MonoNumber" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/otr_muted</item>
+        <item name="android:lineSpacingMultiplier">1.4</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Mono button ("GET →", "+ LIST", "CLEAR DONE"): JetBrains Mono 11 uppercase accent +0.012em -->
+    <style name="TextAppearance.OTR.MonoButton" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">@color/otr_accent</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.012</item>
+        <item name="android:lineSpacingMultiplier">1.0</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Mono button — muted variant for secondary toolbar actions (SHARE, EDIT, BACK). -->
+    <style name="TextAppearance.OTR.MonoButtonMuted" parent="TextAppearance.OTR.MonoButton">
+        <item name="android:textColor">@color/otr_muted</item>
+    </style>
+
+    <!-- Mono note kicker ("COOK'S NOTE"): JetBrains Mono 9 uppercase accent +0.022em -->
+    <style name="TextAppearance.OTR.MonoNoteKicker" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">9sp</item>
+        <item name="android:textColor">@color/otr_accent</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.022</item>
+        <item name="android:lineSpacingMultiplier">1.0</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Timing label ("PREP" "COOK" "TOTAL"): JetBrains Mono 9 uppercase muted +0.018em -->
+    <style name="TextAppearance.OTR.TimingLabel" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">9sp</item>
+        <item name="android:textColor">@color/otr_muted</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.018</item>
+        <item name="android:lineSpacingMultiplier">1.0</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- Bottom-nav label states. Material BottomNavigationView lets us set
+         active and inactive TextAppearances separately; we use that to swap
+         font style (italic on active) and weight without per-state code. -->
+    <style name="TextAppearance.OTR.BottomNav" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/cormorant_garamond</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+    <style name="TextAppearance.OTR.BottomNavActive" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/cormorant_garamond</item>
+        <item name="android:textFontWeight">600</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+</resources>

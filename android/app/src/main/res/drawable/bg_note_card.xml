@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Cook's note card: accentSoft fill with a 2dp accent stripe on the left.
+     Bottom layer paints accent across the full width; top layer paints
+     accentSoft inset 2dp from the left, revealing only the stripe. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/otr_accent"/>
+        </shape>
+    </item>
+    <item android:left="2dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/otr_accent_soft"/>
+        </shape>
+    </item>
+</layer-list>

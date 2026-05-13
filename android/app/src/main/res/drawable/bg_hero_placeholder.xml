@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hero frame: 1dp rule border + paper fill behind. When an image is loaded
+     it covers the fill but the 1dp stroke shows through (the consumer applies
+     1dp padding to expose the stroke). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/otr_paper"/>
+    <stroke android:width="1dp" android:color="@color/otr_rule"/>
+</shape>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing scale from the design handoff. Values are dp; sp values use
+         the same units. otr_space_22 is the default screen horizontal padding. -->
+    <dimen name="otr_space_2">2dp</dimen>
+    <dimen name="otr_space_4">4dp</dimen>
+    <dimen name="otr_space_6">6dp</dimen>
+    <dimen name="otr_space_8">8dp</dimen>
+    <dimen name="otr_space_10">10dp</dimen>
+    <dimen name="otr_space_12">12dp</dimen>
+    <dimen name="otr_space_14">14dp</dimen>
+    <dimen name="otr_space_16">16dp</dimen>
+    <dimen name="otr_space_18">18dp</dimen>
+    <dimen name="otr_space_20">20dp</dimen>
+    <dimen name="otr_space_22">22dp</dimen>
+    <dimen name="otr_space_24">24dp</dimen>
+    <dimen name="otr_space_26">26dp</dimen>
+
+    <!-- Hairline divider stroke. Android renders 1dp as a single pixel on
+         lower-density screens so this matches the design's 1dp solid rule. -->
+    <dimen name="otr_rule_hairline">1dp</dimen>
+</resources>

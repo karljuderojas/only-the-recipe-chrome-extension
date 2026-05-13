@@ -1,9 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.OnlyTheRecipe" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryVariant">@color/primary_dark</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="android:statusBarColor">@color/primary</item>
+        <!-- Editorial palette overrides. colorPrimary stays mapped to the
+             terracotta accent so Material widgets we don't restyle directly
+             still inherit the right accent color (ripples, etc.). -->
+        <item name="colorPrimary">@color/otr_accent</item>
+        <item name="colorPrimaryVariant">@color/otr_accent</item>
+        <item name="colorOnPrimary">@color/otr_surface</item>
+        <item name="colorAccent">@color/otr_accent</item>
+
+        <item name="android:windowBackground">@color/otr_bg</item>
+        <item name="android:colorBackground">@color/otr_bg</item>
+
+        <!-- Status bar matches bg with dark icons. -->
+        <item name="android:statusBarColor">@color/otr_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!-- Default text appearance for any view that doesn't opt into a
+             specific TextAppearance.OTR.* style. -->
+        <item name="android:textColor">@color/otr_ink</item>
+        <item name="android:fontFamily">@font/manrope</item>
+        <item name="android:textColorPrimary">@color/otr_ink</item>
+        <item name="android:textColorSecondary">@color/otr_muted</item>
+
+        <!-- BottomNavigationView itemColor needs an explicit color state list. -->
+        <item name="bottomNavigationStyle">@style/Widget.OTR.BottomNav</item>
+    </style>
+
+    <style name="Widget.OTR.BottomNav" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:background">@color/otr_bg</item>
+        <item name="itemIconTint">@color/bottom_nav_item_color</item>
+        <item name="itemTextColor">@color/bottom_nav_item_color</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.OTR.BottomNav</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.OTR.BottomNavActive</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="elevation">0dp</item>
     </style>
 </resources>

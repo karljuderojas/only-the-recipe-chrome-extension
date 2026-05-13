@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Legacy: still referenced by the launcher icon and Theme.OnlyTheRecipe.
+         Cleaned up in a follow-up PR once every screen has shipped. -->
     <color name="primary">#2563eb</color>
     <color name="primary_dark">#1d4ed8</color>
     <color name="white">#ffffff</color>
+
+    <!-- Editorial palette (Cream & Terracotta). Names mirror the design handoff
+         tokens. Prefix is `otr_` to keep them distinct from any Material color
+         attribute names. -->
+    <color name="otr_bg">#FAF8F3</color>
+    <color name="otr_paper">#F3EFE5</color>
+    <color name="otr_ink">#1F1A14</color>
+    <color name="otr_muted">#8A7F6D</color>
+    <color name="otr_rule">#E6E0D0</color>
+    <color name="otr_accent">#C2602F</color>
+    <color name="otr_accent_soft">#F1DCCC</color>
+    <color name="otr_note_ink">#5A3520</color>
+    <color name="otr_surface">#FFFFFF</color>
 </resources>
