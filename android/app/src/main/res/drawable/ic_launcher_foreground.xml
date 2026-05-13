@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Rounded white card centered in the 66dp safe zone -->
+    <path
+        android:fillColor="#ffffff"
+        android:pathData="M34,30 L74,30 A6,6 0 0 1 80,36 L80,72 A6,6 0 0 1 74,78 L34,78 A6,6 0 0 1 28,72 L28,36 A6,6 0 0 1 34,30 Z"/>
+
+    <!-- Three lines suggesting recipe instructions -->
+    <path
+        android:fillColor="#2563eb"
+        android:pathData="M37,42 L71,42 L71,46 L37,46 Z"/>
+    <path
+        android:fillColor="#2563eb"
+        android:pathData="M37,52 L71,52 L71,56 L37,56 Z"/>
+    <path
+        android:fillColor="#2563eb"
+        android:pathData="M37,62 L61,62 L61,66 L37,66 Z"/>
+</vector>

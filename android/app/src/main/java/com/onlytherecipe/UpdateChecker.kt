@@ -13,6 +13,10 @@ object UpdateChecker {
         "https://api.github.com/repos/karljuderojas/only-the-recipe-chrome-extension/releases/latest"
 
     fun check(context: Context, onUpdateAvailable: (latestTag: String, apkUrl: String) -> Unit) {
+        // Play Store distributes updates for the play flavor — self-updating
+        // by downloading APKs from GitHub violates Play's distribution policy.
+        if (!BuildConfig.ENABLE_GITHUB_UPDATE_CHECK) return
+
         val currentVersion = try {
             @Suppress("DEPRECATION")
             context.packageManager.getPackageInfo(context.packageName, 0).versionName

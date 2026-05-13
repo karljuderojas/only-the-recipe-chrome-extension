@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APK + AAB
 
 on:
   push:
@@ -25,18 +25,46 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: '8.6'
+          gradle-version: '8.7'
 
-      - name: Build Debug APK
-        run: gradle :app:assembleDebug
+      # Decode the upload keystore from a base64 secret. If the secret isn't
+      # configured (forks, first-time setup), the Play AAB falls back to debug
+      # signing — Play won't accept it but the build still completes so you can
+      # see what's missing.
+      - name: Decode upload keystore
+        if: ${{ env.HAS_KEYSTORE == 'true' }}
+        env:
+          HAS_KEYSTORE: ${{ secrets.OTR_KEYSTORE_BASE64 != '' }}
+          KEYSTORE_BASE64: ${{ secrets.OTR_KEYSTORE_BASE64 }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload-keystore.jks"
+          echo "OTR_KEYSTORE_PATH=$RUNNER_TEMP/upload-keystore.jks" >> "$GITHUB_ENV"
+
+      - name: Build sideload debug APK
+        run: gradle :app:assembleSideloadDebug
         working-directory: android
 
-      - name: Upload APK artifact
+      - name: Build Play release AAB
+        env:
+          OTR_KEYSTORE_PASSWORD: ${{ secrets.OTR_KEYSTORE_PASSWORD }}
+          OTR_KEY_ALIAS: ${{ secrets.OTR_KEY_ALIAS }}
+          OTR_KEY_PASSWORD: ${{ secrets.OTR_KEY_PASSWORD }}
+        run: gradle :app:bundlePlayRelease
+        working-directory: android
+
+      - name: Upload sideload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: only-the-recipe-debug
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: only-the-recipe-sideload-debug
+          path: android/app/build/outputs/apk/sideload/debug/app-sideload-debug.apk
           retention-days: 30
+
+      - name: Upload Play AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: only-the-recipe-play-release-aab
+          path: android/app/build/outputs/bundle/playRelease/app-play-release.aab
+          retention-days: 90
 
       - name: Extract version
         id: version
@@ -44,15 +72,15 @@ jobs:
           VERSION=$(grep 'versionName' android/app/build.gradle | sed 's/.*"\(.*\)"/\1/')
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Publish GitHub Release
+      - name: Publish GitHub Release (sideload APK only)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG="${{ steps.version.outputs.tag }}"
-          APK="android/app/build/outputs/apk/debug/app-debug.apk"
+          APK="android/app/build/outputs/apk/sideload/debug/app-sideload-debug.apk"
           # Delete existing release and tag so we can overwrite with the latest build
           gh release delete "$TAG" --yes 2>/dev/null || true
           git push origin ":refs/tags/$TAG" 2>/dev/null || true
           gh release create "$TAG" "$APK" \
             --title "Only The Recipe $TAG" \
-            --notes "Debug build — sideload on Android (enable Unknown Sources first)."
+            --notes "Debug build for sideload (enable Unknown Sources first). The Play Store version is distributed separately via Google Play."

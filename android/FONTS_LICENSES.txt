@@ -1,0 +1,16 @@
+Fonts bundled under android/app/src/main/res/font/ ship under the SIL Open
+Font License v1.1.
+
+Cormorant Garamond — © Christian Thalmann (Catharsis Fonts)
+  Source: github.com/CatharsisFonts/Cormorant
+  Weights bundled: Medium (500), MediumItalic (500i), SemiBoldItalic (600i)
+
+Manrope — © Mikhail Sharanda
+  Source: github.com/davelab6/manrope (mirror of the Manrope project)
+  Weights bundled: Regular (400), Medium (500), SemiBold (600), Bold (700)
+
+JetBrains Mono — © JetBrains s.r.o.
+  Source: github.com/JetBrains/JetBrainsMono
+  Weights bundled: Regular (400), Medium (500), SemiBold (600), Bold (700)
+
+Full license text: https://scripts.sil.org/OFL

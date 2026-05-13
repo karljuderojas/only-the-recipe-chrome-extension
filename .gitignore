@@ -1,0 +1,32 @@
+# Android build output
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+android/captures/
+android/*.iml
+android/app/*.iml
+
+# IDE
+.idea/
+*.iml
+
+# Build artifacts / packaged drops
+apk-output/
+Only The Recipe.zip
+*.zip
+
+# Unrelated external project that ended up in this tree
+awesome-selfhosted/
+
+# Keystore secrets — NEVER commit these
+*.jks
+*.keystore
+keystore.properties
+android/keystore.properties
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
